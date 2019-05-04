@@ -4,23 +4,15 @@ import { getAlgorithms, createAlgorithm, updateAlgorithm, deleteAlgorithm } from
 const router = express.Router();
 
 /* GET algorithms */
-router.get('/', function(req, res) {
-  getAlgorithms(req, res);
-});
+router.get('/', getAlgorithms);
 
 /* POST algorithm */
-router.post('/', function(req, res) {
-  createAlgorithm(req, res);
-});
+router.post('/', createAlgorithm);
 
 /* PATCH algorithm */
-router.patch('/', function(req, res) {
-  updateAlgorithm(req, res);
-});
+router.patch('/', updateAlgorithm);
 
 /* DELETE algorithm */
-router.delete('/', function(req, res) {
-  deleteAlgorithm(req, res);
-});
+router.delete('/', deleteAlgorithm);
 
 export default router;

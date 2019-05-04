@@ -1,4 +1,7 @@
 import * as path from 'path';
+import * as dotenv from "dotenv";
+dotenv.config();
+
 import * as logger from 'morgan';
 import * as express from 'express';
 import * as passport from 'passport';

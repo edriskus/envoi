@@ -4,23 +4,15 @@ import { getJobs, createJob, updateJob, deleteJob } from '../controllers/jobs';
 const router = express.Router();
 
 /* GET jobs */
-router.get('/', function(req, res) {
-  getJobs(req, res);
-});
+router.get('/', getJobs);
 
 /* POST job */
-router.post('/', function(req, res) {
-  createJob(req, res);
-});
+router.post('/', createJob);
 
 /* PATCH job */
-router.patch('/', function(req, res) {
-  updateJob(req, res);
-});
+router.patch('/', updateJob);
 
 /* DELETE job */
-router.delete('/', function(req, res) {
-  deleteJob(req, res);
-});
+router.delete('/', deleteJob);
 
 export default router;

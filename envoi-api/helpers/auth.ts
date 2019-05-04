@@ -2,14 +2,18 @@ import * as passport from "passport";
 import * as passportJWT from "passport-jwt";
 
 import User from "../models/user";
+import { BadRequestError } from "../types/controller";
 
 export function setupPassport() {
   const JwtStrategy = passportJWT.Strategy;
   const ExtractJwt = passportJWT.ExtractJwt;
 
+  console.log("Secret", process.env.JWT_SECRET);
+  
+
   const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: "secret",
+    secretOrKey: process.env.JWT_SECRET,
     issuer: "envoi.riskus.lt",
     audience: "envoi.riskus.lt"
   };
@@ -24,9 +28,15 @@ export function setupPassport() {
           return done(null, user);
         } else {
           return done(null, false);
-          // or you could create a new account
+          // Or you could create a new account
         }
       });
     })
   );
+}
+
+export function throwLoginError() {
+  const error = new BadRequestError('User');
+  error.message = 'Username or password is incorrect!';
+  throw error;
 }

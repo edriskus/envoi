@@ -4,13 +4,9 @@ import { updateSettings, getSettings } from '../controllers/settings';
 const router = express.Router();
 
 /* GET settings */
-router.get('/', function(req, res) {
-  getSettings(req, res);
-});
+router.get('/', getSettings);
 
 /* PATCH settings */
-router.patch('/', function(req, res) {
-  updateSettings(req, res);
-});
+router.patch('/', updateSettings);
 
 export default router;

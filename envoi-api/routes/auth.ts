@@ -1,10 +1,14 @@
 import * as express from 'express';
 
+import { doLogin, doRegister } from '../controllers/auth';
+import { failableController } from '../helpers/controller';
+
 const router = express.Router();
 
-/* GET */
-router.get('/', function(req, res, next) {
-  res.json({ message: 'OK' });
-});
+/* POST login */
+router.post('/login', failableController(doLogin));
+
+/* POST register */
+router.post('/register', failableController(doRegister));
 
 export default router;
