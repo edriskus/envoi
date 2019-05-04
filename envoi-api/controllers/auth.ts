@@ -2,16 +2,16 @@ import * as jwt from "jsonwebtoken";
 
 import User from "../models/user";
 
-import { Request, Response, NextFunction } from "express";
-import { throwLoginError } from "../helpers/auth";
 import {
+  validateTrue,
+  validateEmail,
   validateRequired,
   validatePassword,
   combineValidations,
-  throwValidationError,
-  validateEmail,
-  validateTrue,
+  throwValidationError
 } from "../helpers/validations";
+import { throwLoginError } from "../helpers/auth";
+import { Request, Response, NextFunction } from "express";
 import { throwServerError, failableController } from "../helpers/controller";
 
 /**
@@ -66,17 +66,17 @@ export async function doLogin(req: Request, res: Response) {
  * @param res
  */
 export async function doRegister(
-  req: Request, 
+  req: Request,
   res: Response,
   next: NextFunction
 ) {
-  const { 
-    email, 
-    username, 
+  const {
+    email,
+    username,
     password,
     firstName,
     lastName,
-    acceptTerms 
+    acceptTerms
   } = req.body as any;
 
   const errors = combineValidations(
@@ -86,7 +86,7 @@ export async function doRegister(
     validateRequired(password, "Password"),
     validatePassword(password),
     validateRequired(firstName, "First Name"),
-    validateTrue(acceptTerms, "\"Accept terms\""),
+    validateTrue(acceptTerms, '"Accept terms"')
   );
   if (errors) {
     throwValidationError(errors);

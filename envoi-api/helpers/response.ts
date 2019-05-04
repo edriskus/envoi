@@ -1,6 +1,6 @@
 /**
- * 
- * @param entity 
+ *
+ * @param entity
  */
 export function deleteSuccess(entity: any) {
   return {

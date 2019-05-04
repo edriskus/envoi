@@ -1,11 +1,11 @@
-import { RequestHandler, Request, Response, NextFunction } from "express";
 import {
   NotFoundError,
   ForbiddenError,
   BadRequestError,
   UnauthorizedError,
-  AsyncRequestHandler,
+  AsyncRequestHandler
 } from "../types/controller";
+import { RequestHandler, Request, Response, NextFunction } from "express";
 
 export function throwNotFound(entityName: string) {
   throw new NotFoundError(entityName);
@@ -29,28 +29,26 @@ export function throwServerError() {
 
 /**
  * Handles async function controller errors
- * @param controller 
+ * @param controller
  */
 export function failableController(
   controller: AsyncRequestHandler
 ): RequestHandler {
-  return function(req?: Request, res?: Response, next?: NextFunction) {    
-    return controller(req, res, next).catch(
-      (error: any) => {        
-        if (
-          error instanceof NotFoundError ||
-          error instanceof BadRequestError ||
-          error instanceof UnauthorizedError ||
-          error instanceof ForbiddenError
-        ) {
-          return res.status(error.status).json(error);
-        } else {
-          return res.status(500).json({
-            status: 500,
-            message: 'Unhandled error'
-          });
-        }
+  return function(req?: Request, res?: Response, next?: NextFunction) {
+    return controller(req, res, next).catch((error: any) => {
+      if (
+        error instanceof NotFoundError ||
+        error instanceof BadRequestError ||
+        error instanceof UnauthorizedError ||
+        error instanceof ForbiddenError
+      ) {
+        return res.status(error.status).json(error);
+      } else {
+        return res.status(500).json({
+          status: 500,
+          message: "Unhandled error"
+        });
       }
-    );
+    });
   };
 }

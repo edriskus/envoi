@@ -1,18 +1,33 @@
-import * as express from 'express';
-import { getAlgorithms, createAlgorithm, updateAlgorithm, deleteAlgorithm } from '../controllers/algorithms';
+import * as express from "express";
+
+import {
+  getAlgorithm,
+  getAlgorithms,
+  createAlgorithm,
+  updateAlgorithm,
+  deleteAlgorithm,
+} from "../controllers/algorithms";
+import { isCreator, loggedIn } from "../helpers/auth";
 
 const router = express.Router();
 
+router.use(loggedIn());
+
 /* GET algorithms */
-router.get('/', getAlgorithms);
+router.get("/", getAlgorithms);
+
+/* GET algorithms */
+router.get("/:id", getAlgorithm);
+
+router.use(isCreator);
 
 /* POST algorithm */
-router.post('/', createAlgorithm);
+router.post("/", createAlgorithm);
 
 /* PATCH algorithm */
-router.patch('/', updateAlgorithm);
+router.patch("/:id", updateAlgorithm);
 
 /* DELETE algorithm */
-router.delete('/', deleteAlgorithm);
+router.delete("/:id", deleteAlgorithm);
 
 export default router;

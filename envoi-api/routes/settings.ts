@@ -1,4 +1,5 @@
 import * as express from 'express';
+
 import { updateSettings, getSettings } from '../controllers/settings';
 
 const router = express.Router();

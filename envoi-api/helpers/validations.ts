@@ -1,29 +1,26 @@
 import { BadRequestError } from "../types/controller";
 
 /**
- * 
- * @param value 
+ *
+ * @param value
  */
 export function validateRequired(
   value: string | number,
-  entityName: string = 'Password',
+  entityName: string = "Password"
 ): string | undefined {
-  if (
-    (typeof value === 'string' && value.length < 1) ||
-    (value == null)
-  ) {
+  if ((typeof value === "string" && value.length < 1) || value == null) {
     return `${entityName} is required`;
   }
   return undefined;
 }
 
 /**
- * 
- * @param value 
+ *
+ * @param value
  */
 export function validateEmail(
   value: string,
-  entityName: string = 'Email',
+  entityName: string = "Email"
 ): string | undefined {
   const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   if (!regex.test(value)) {
@@ -33,29 +30,32 @@ export function validateEmail(
 }
 
 /**
- * 
- * @param value 
+ *
+ * @param value
  */
 export function validatePassword(
   value: string,
-  entityName: string = 'Password',
+  entityName: string = "Password"
 ): string | undefined {
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
   if (!regex.test(value)) {
-    return entityName + ' must contain at least 1 lowercase, 1 uppercase character, '
-      + '1 numeric character, at least one special character and '
-      + 'be 8 characters or longer';
+    return (
+      entityName +
+      " must contain at least 1 lowercase, 1 uppercase character, " +
+      "1 numeric character, at least one special character and " +
+      "be 8 characters or longer"
+    );
   }
   return undefined;
 }
 
 /**
- * 
- * @param value 
+ *
+ * @param value
  */
 export function validateTrue(
   value: boolean,
-  entityName: string,
+  entityName: string
 ): string | undefined {
   if (value === true) {
     return `${entityName} must be selected`;
@@ -64,8 +64,8 @@ export function validateTrue(
 }
 
 /**
- * 
- * @param validateErrors 
+ *
+ * @param validateErrors
  */
 export function combineValidations(
   ...validateErrors: (string | undefined)[]
@@ -79,8 +79,8 @@ export function combineValidations(
 }
 
 export function throwValidationError(errors: string[]) {
-  const error = new BadRequestError('Request');
-  error.message = 'Some fields are not valid';
+  const error = new BadRequestError("Request");
+  error.message = "Some fields are not valid";
   error.errors = errors;
   throw error;
 }

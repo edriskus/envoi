@@ -1,5 +1,5 @@
-import * as mongoose from "mongoose";
 import * as bcrypt from "bcryptjs";
+import * as mongoose from "mongoose";
 
 import { IUser } from "../types/user";
 
@@ -10,8 +10,9 @@ const UserSchema = new Schema<IUser>({
   username: { type: String, required: true, index: { unique: true } },
   password: { type: String, required: true },
   email: { type: String, required: true },
+  type: { type: String, required: true, default: "CONSUMER" },
   firstName: { type: String, required: true },
-  lastName: { type: String },
+  lastName: { type: String }
 });
 
 UserSchema.pre("save", function(next) {
@@ -42,7 +43,7 @@ UserSchema.pre("save", function(next) {
 });
 
 (UserSchema.methods as any).comparePassword = async function(
-  candidatePassword: string,
+  candidatePassword: string
 ) {
   return new Promise((resolve, reject) => {
     bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
@@ -51,7 +52,7 @@ UserSchema.pre("save", function(next) {
       }
       resolve(isMatch);
     });
-  })
+  });
 };
 
 export default mongoose.model("User", UserSchema);
