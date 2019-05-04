@@ -4,6 +4,7 @@ import * as mongoose from "mongoose";
  * Sets mongoose ODM up
  */
 export function setupMongoose() {
+  mongoose.set('useFindAndModify', false);
   mongoose.connect('mongodb://localhost/envoi', {useNewUrlParser: true});
   const db = mongoose.connection;
   db.on('error', function(error: string) {

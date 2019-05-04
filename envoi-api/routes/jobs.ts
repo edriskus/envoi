@@ -8,24 +8,25 @@ import {
   deleteJob,
 } from "../controllers/jobs";
 import { loggedIn } from "../helpers/auth";
+import { failableController } from "../helpers/controller";
 
 const router = express.Router();
 
 /* GET job by ID */
-router.get("/:id", getJob);
+router.get("/:id", failableController(getJob));
 
 router.use(loggedIn());
 
 /* GET jobs */
-router.get("/", getJobs);
+router.get("/", failableController(getJobs));
 
 /* POST job */
-router.post("/", createJob);
+router.post("/", failableController(createJob));
 
 /* PATCH job */
-router.patch("/:id", updateJob);
+router.patch("/:id", failableController(updateJob));
 
 /* DELETE job */
-router.delete("/:id", deleteJob);
+router.delete("/:id", failableController(deleteJob));
 
 export default router;

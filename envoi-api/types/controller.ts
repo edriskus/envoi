@@ -7,7 +7,7 @@ export class NotFoundError {
   constructor(
     entityName: string
   ) {
-    this.message = `${entityName} not found!`;
+    this.message = `${entityName} not found`;
   }
 }
 

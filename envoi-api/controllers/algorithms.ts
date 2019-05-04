@@ -1,5 +1,4 @@
 import { Response, Request } from "express";
-import { deleteSuccess } from "../helpers/response";
 
 /**
  *
@@ -48,5 +47,5 @@ export function updateAlgorithm(req: Request, res: Response) {
  */
 export function deleteAlgorithm(req: Request, res: Response) {
   // TODO: Do something
-  res.json(deleteSuccess({}));
+  res.json({});
 }

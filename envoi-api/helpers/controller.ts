@@ -7,23 +7,23 @@ import {
 } from "../types/controller";
 import { RequestHandler, Request, Response, NextFunction } from "express";
 
-export function throwNotFound(entityName: string) {
+export function throwNotFound(entityName: string): any {  
   throw new NotFoundError(entityName);
 }
 
-export function throwBadRequest(entityName: string) {
+export function throwBadRequest(entityName: string): any {
   throw new BadRequestError(entityName);
 }
 
-export function throwUnauthorized(entityName: string) {
+export function throwUnauthorized(entityName: string): any {
   throw new UnauthorizedError(entityName);
 }
 
-export function throwForbidden(entityName: string) {
+export function throwForbidden(entityName: string): any {
   throw new ForbiddenError(entityName);
 }
 
-export function throwServerError() {
+export function throwServerError(): any {
   throw null;
 }
 
