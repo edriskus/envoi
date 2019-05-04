@@ -27,20 +27,16 @@ export function throwServerError() {
   throw null;
 }
 
+/**
+ * Handles async function controller errors
+ * @param controller 
+ */
 export function failableController(
   controller: AsyncRequestHandler
 ): RequestHandler {
-  return function(req?: Request, res?: Response, next?: NextFunction) {
-    console.log("Running failable controller inside");
-    
-    return controller(req, res, next).then(
-      () => {
-        console.log("All fuking good");
-        
-      },
-      (error: any) => {
-        console.log("Caught error");
-        
+  return function(req?: Request, res?: Response, next?: NextFunction) {    
+    return controller(req, res, next).catch(
+      (error: any) => {        
         if (
           error instanceof NotFoundError ||
           error instanceof BadRequestError ||

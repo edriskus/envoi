@@ -11,7 +11,7 @@ export function getJobs(
   res: Response
 ) {
   // TODO: Do something
-  res.json({});
+  res.json([{ title: 'job1' }]);
 }
 
 /**

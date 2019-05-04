@@ -43,7 +43,9 @@ export async function doLogin(req: Request, res: Response) {
         },
         process.env.JWT_SECRET,
         {
-          algorithm: "HS256"
+          algorithm: "HS256",
+          issuer: "envoi.riskus.lt",
+          audience: "envoi.riskus.lt"
         }
       );
       res.json({

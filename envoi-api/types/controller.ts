@@ -28,7 +28,7 @@ export class UnauthorizedError {
   public message: string;
 
   constructor(
-    entityName: string
+    entityName: string = 'the data'
   ) {
     this.message = `Please log in to access ${entityName}`;
   }
