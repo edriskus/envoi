@@ -13,8 +13,8 @@ import indexRouter from './routes/index';
 import settingsRouter from './routes/settings';
 import algorithmsRouter from './routes/algorithms';
 
-import { setupMongoose } from './helpers/mongoose';
 import { setupPassport } from './helpers/auth';
+import { setupMongoose } from './helpers/mongoose';
 
 const app = express();
 setupMongoose();
