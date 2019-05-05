@@ -49,8 +49,11 @@ export async function doLogin(req: Request, res: Response) {
         }
       );
       res.json({
-        status: 200,
-        token
+        token,
+        username: (user as any).username,
+        email: (user as any).email,
+        firstName: (user as any).firstName,
+        lastName: (user as any).lastName,
       });
     } else {
       throwLoginError();

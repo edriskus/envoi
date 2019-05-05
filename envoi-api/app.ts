@@ -1,4 +1,5 @@
 import * as path from 'path';
+import * as cors from "cors";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -19,6 +20,7 @@ import { setupMongoose } from './helpers/mongoose';
 const app = express();
 setupMongoose();
 
+app.use(cors())
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

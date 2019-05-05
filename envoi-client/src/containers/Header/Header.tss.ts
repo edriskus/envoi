@@ -27,6 +27,7 @@ const headerStyles = (theme: Theme) => createStyles({
   chip: {
     backgroundColor: theme.palette.common.white,
     marginLeft: theme.spacing.unit,
+    cursor: "pointer",
   },
 });
 

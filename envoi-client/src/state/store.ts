@@ -10,8 +10,16 @@ export function configStore(
 ): Store<IAppReduxState> {
   const appReducers = getAppReducers();
   const sagaMiddleware = createSagaMiddleware();
-  const enhancers = compose(applyMiddleware(sagaMiddleware));
-  const store = createStore(appReducers, initialState, enhancers);
+  const enhancers = compose(
+    applyMiddleware(sagaMiddleware),
+    (window as any).__REDUX_DEVTOOLS_EXTENSION__ 
+      && (window as any).__REDUX_DEVTOOLS_EXTENSION__()
+  );
+  const store = createStore(
+    appReducers, 
+    initialState, 
+    enhancers,
+  );
   sagaMiddleware.run(rootSaga);
   return store;
 }

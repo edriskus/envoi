@@ -1,4 +1,6 @@
+import { requestLogin } from "./user/userSagas";
 import { IAppReduxState } from "../types/global";
+import { userConstants } from "./user/userConstants";
 import { persistState } from "../helpers/localStorage";
 import { select, takeLatest, delay } from "redux-saga/effects";
 
@@ -19,6 +21,9 @@ function* statePersistor() {
  */
 function* rootSaga() {
   yield takeLatest("*", statePersistor);
+
+  // User sagas
+  yield takeLatest(userConstants.reqLogin, requestLogin);
 }
 
 export { rootSaga };

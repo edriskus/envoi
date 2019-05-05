@@ -1,6 +1,6 @@
 import { IAppReduxState } from "../types/global";
 
-const storageKey = "@earnwisePersistedReduxState";
+const storageKey = "@envoiState";
 
 export const loadPersistedState = (): IAppReduxState | undefined => {
   try {

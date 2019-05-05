@@ -1,12 +1,8 @@
 import React from 'react';
 import appStyles from './App.tss';
-import Landing from '../Landing/Landing';
-import JobList from '../JobList/JobList';
-import JobEdit from '../JobEdit/JobEdit';
 import theme from '../../styles/theme.tss';
-import JobRunner from '../JobRunner/JobRunner';
-import Header from '../../components/Header/Header';
-import AlgorithmList from '../AlgorithmList/AlgorithmList';
+import ConnectedRoutes from '../Routes/ConnectedRoutes';
+import ConnectedHeader from '../Header/ConnectedHeader';
 
 import { 
   Grid, 
@@ -17,12 +13,13 @@ import {
 } from '@material-ui/core';
 import { Component } from 'react';
 import { Provider } from 'react-redux'
-import { BrowserRouter as Router, Route } from "react-router-dom";
 import { configStore } from '../../state/store';
+import { BrowserRouter as Router } from "react-router-dom";
+import { loadPersistedState } from '../../helpers/localStorage';
 
 type IAppProps = WithStyles<typeof appStyles>;
 
-const store = configStore();
+const store = configStore(loadPersistedState());
 
 class App extends Component<IAppProps> {
   render() {
@@ -32,19 +29,13 @@ class App extends Component<IAppProps> {
         <Router>
           <CssBaseline />
           <MuiThemeProvider theme={theme}>
-            <Header />
+            <ConnectedHeader />
             <div className={classes.mainWrapper}>
               <Grid 
                 spacing={16}
                 container={true} 
               >
-                <Route path="/" exact={true} component={Landing}></Route>
-
-                <Route path="/jobs" exact={true} component={JobList}></Route>
-                <Route path="/jobs/:id" exact={true} component={JobRunner}></Route>
-                <Route path="/jobs/:id/edit" exact={true} component={JobEdit}></Route>
-
-                <Route path="/algorithms" exact={true} component={AlgorithmList}></Route>
+                <ConnectedRoutes />
               </Grid>
             </div>
           </MuiThemeProvider>

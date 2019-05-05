@@ -12,7 +12,6 @@ const Landing: React.FunctionComponent<ILandingProps> =
       <Grid 
         xs={12} 
         item={true} 
-        alignItems="center"
         className={classes.fullWrapper}
       >
         <Typography variant="h1" align="center">Envoi.ts</Typography>

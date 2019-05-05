@@ -1,5 +1,10 @@
 import { userConstants } from "./userConstants";
-import { IUserReduxState, UserAction, ISetTokenAction } from "../../types/user";
+import {
+  UserAction,
+  IUserReduxState,
+  IReceiveLoginAction,
+  IReceiveRegisterAction,
+} from "../../types/user";
 
 const initialState: IUserReduxState = {};
 
@@ -8,14 +13,29 @@ export const userReducer = (
   action: Partial<UserAction>
 ): IUserReduxState => {
   switch (action.type) {
-    case userConstants.setToken:
+    case userConstants.clearError:
+      const { error, ...rest } = state;
+      return rest;
+    case userConstants.removeToken:
+      return {};
+    case userConstants.reqLogin:
       return {
         ...state,
-        token: (action as ISetTokenAction).payload
+        loading: true
       };
-    case userConstants.removeToken:
-      const { token, ...rest } = state;
-      return rest;
+    case userConstants.resLogin:
+      return {
+        ...(action as IReceiveLoginAction).payload
+      };
+    case userConstants.reqRegister:
+      return {
+        ...state,
+        loading: true
+      };
+    case userConstants.resRegister:
+      return {
+        ...(action as IReceiveRegisterAction).payload
+      };
     default:
       return state;
   }
