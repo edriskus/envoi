@@ -1,3 +1,4 @@
+import { IValidationError } from "./validations";
 import { Request, Response, NextFunction } from "express";
 
 export class NotFoundError {
@@ -14,7 +15,7 @@ export class NotFoundError {
 export class BadRequestError {
   public status = 400;
   public message: string;
-  public errors?: string[];
+  public errors?: IValidationError[];
 
   constructor(
     entityName: string

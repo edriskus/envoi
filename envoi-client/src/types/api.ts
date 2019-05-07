@@ -5,10 +5,15 @@ export interface ILoadableReduxState {
   error?: IApiError;
 }
 
+export interface IValidationError {
+  name: string;
+  message: string;
+}
+
 export interface IApiError {
   status: number,
   message: string,
-  errors?: string[],
+  errors?: IValidationError[],
 }
 
 export interface IClearErrorAction<T> {

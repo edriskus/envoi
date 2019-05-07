@@ -23,9 +23,9 @@ export async function doLogin(req: Request, res: Response) {
   const { username, password } = req.body as any;
 
   const errors = combineValidations(
-    validateRequired(username, "Username"),
-    validateRequired(password, "Password"),
-    validatePassword(password)
+    validateRequired(username, "username", "Username"),
+    validateRequired(password, "password", "Password"),
+    validatePassword(password, "password")
   );
   if (errors) {
     throwValidationError(errors);
@@ -53,7 +53,7 @@ export async function doLogin(req: Request, res: Response) {
         username: (user as any).username,
         email: (user as any).email,
         firstName: (user as any).firstName,
-        lastName: (user as any).lastName,
+        lastName: (user as any).lastName
       });
     } else {
       throwLoginError();
@@ -83,13 +83,13 @@ export async function doRegister(
   } = req.body as any;
 
   const errors = combineValidations(
-    validateRequired(email, "Email"),
-    validateEmail(email),
-    validateRequired(username, "Username"),
-    validateRequired(password, "Password"),
-    validatePassword(password),
-    validateRequired(firstName, "First Name"),
-    validateTrue(acceptTerms, '"Accept terms"')
+    validateRequired(email, "email", "Email"),
+    validateEmail(email, "email"),
+    validateRequired(username, "username", "Username"),
+    validateRequired(password, "password", "Password"),
+    validatePassword(password, "password"),
+    validateRequired(firstName, "firstName", "First Name"),
+    validateTrue(acceptTerms, "acceptTerms", '"Accept terms"')
   );
   if (errors) {
     throwValidationError(errors);

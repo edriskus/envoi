@@ -9,6 +9,6 @@ export function* requestLogin(action: IRequestLoginAction) {
     null,
     'POST',
     action.payload
-  ).catch(e => ({ error: e.response }));  
+  ).catch(e => ({ data: { error: e.response.data }}));  
   yield put(receiveLoginAction(response.data));
 }

@@ -4,6 +4,7 @@ import JobList from '../JobList/JobList';
 import JobEdit from '../JobEdit/JobEdit';
 import Settings from "../Settings/Settings";
 import JobRunner from '../JobRunner/JobRunner';
+import ConnectedJoin from "../Join/ConnectedJoin";
 import ConnectedLogin from "../Login/ConnectedLogin";
 import AlgorithmList from '../AlgorithmList/AlgorithmList';
 import ConnectedDashboard from "../Dashboard/ConnectedDashboard";
@@ -30,7 +31,8 @@ const Routes: React.FunctionComponent<IUserData> = (
 
       {!loggedIn && [
         <Route key={0} path="/" exact={true} component={Landing} />,
-        <Route key={1} path="/login" exact={true} component={ConnectedLogin} />
+        <Route key={1} path="/login" exact={true} component={ConnectedLogin} />,
+        <Route key={2} path="/join" exact={true} component={ConnectedJoin} />
       ]}
       
       <Redirect to="/" />

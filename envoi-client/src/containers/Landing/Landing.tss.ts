@@ -5,8 +5,23 @@ const landingStyles = (theme: Theme) => createStyles({
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    minHeight: `calc(100vh - 150px)`,
+    minHeight: `calc(100vh - 80px)`,
   },
+  brandWrapper: {
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+  },
+  screenshotWrapper: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  screenshot: {
+    width: "70vw",
+    marginBottom: "-16px",
+  }
 });
 
 export default landingStyles;

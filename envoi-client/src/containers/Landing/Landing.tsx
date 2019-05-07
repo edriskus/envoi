@@ -3,6 +3,8 @@ import landingStyles from "./Landing.tss";
 
 import { Typography, Grid, WithStyles, withStyles } from "@material-ui/core";
 
+import screenshot from "../../assets/screenshot.png";
+
 type ILandingProps = WithStyles<typeof landingStyles>;
 
 const Landing: React.FunctionComponent<ILandingProps> = 
@@ -14,10 +16,18 @@ const Landing: React.FunctionComponent<ILandingProps> =
         item={true} 
         className={classes.fullWrapper}
       >
-        <Typography variant="h1" align="center">Envoi.ts</Typography>
-        <Typography variant="h5" align="center">
-          /ahn-vwa/
-        </Typography>
+        <div className={classes.brandWrapper}>
+          <Typography variant="h1" align="center">Envoi.ts</Typography>
+          <Typography variant="h5" align="center">
+            /ahn-vwa/
+          </Typography>
+        </div>
+        <div className={classes.screenshotWrapper}>
+          <img 
+            src={screenshot} 
+            className={classes.screenshot} 
+          />
+        </div>
       </Grid>
     );
   }

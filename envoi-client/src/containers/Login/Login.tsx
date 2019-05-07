@@ -1,5 +1,6 @@
-import React, { FormEvent } from "react";
+import React  from "react"; 
 import loginStyles from "./Login.tss";
+import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 
 import {
   Grid,
@@ -12,8 +13,10 @@ import {
   Typography,
   LinearProgress,
 } from "@material-ui/core";
-import { Redirect } from "react-router";
+import { FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { IApiError } from "../../types/api";
+import { hasError, formatError } from "../../helpers/validations";
 
 interface ILoginState {
   username: string;
@@ -28,6 +31,7 @@ export interface ILoginStateProps {
 
 export interface ILoginDispatchProps {
   requestLogin(username: string, password: string): void;
+  clearError(): void;
 }
 
 type ILoginStyleProps = WithStyles<typeof loginStyles>;
@@ -52,11 +56,17 @@ class Login extends React.PureComponent<ILoginProps, ILoginState> {
               variant="h2"
               gutterBottom={true}
             >Log in</Typography>
+            <ErrorMessage error={error} />
             <form 
               className={classes.flex} 
               onSubmit={this.handleSubmit}
             >
               <TextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={hasError('username', error)}
+                helperText={formatError('username', error)}
                 label="User Name"
                 value={username}
                 name="username"
@@ -65,6 +75,11 @@ class Login extends React.PureComponent<ILoginProps, ILoginState> {
                 variant="outlined"
               />
               <TextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                error={hasError('password', error)}
+                helperText={formatError('password', error)}
                 label="Password"
                 type="password"
                 value={password}
@@ -78,9 +93,28 @@ class Login extends React.PureComponent<ILoginProps, ILoginState> {
                 color="primary"
                 disabled={loading}
                 variant="contained"
+                className={classes.paddedEnter}
               >
                 Enter
               </Button>
+              <div className={classes.registerFlex}>
+                <Typography 
+                  variant="overline"
+                >
+                  Don't have an account?
+                </Typography>
+                <Link to="/join">
+                  <Button
+                    size="small"
+                    type="button"
+                    color="primary"
+                    variant="outlined"
+                    className={classes.registerButton}
+                  >
+                    Join
+                  </Button>
+                </Link>
+              </div>
             </form>
           </CardContent>
           {loading && <LinearProgress />}
@@ -100,10 +134,14 @@ class Login extends React.PureComponent<ILoginProps, ILoginState> {
   private handleChange = (name: "username" | "password") => (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
+    const { error, clearError } = this.props;
     const { value } = event.target;
     this.setState({
       [name]: value
     } as any);
+    if (error) {
+      clearError();
+    }
   };
 
   private handleUsernameChange = this.handleChange("username");

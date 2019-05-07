@@ -1,6 +1,6 @@
 import { createStyles, Theme } from "@material-ui/core";
 
-const loginStyles = (theme: Theme) => createStyles({
+const joinStyles = (theme: Theme) => createStyles({
   flex: {
     display: "flex",
     flexDirection: "column",
@@ -21,4 +21,4 @@ const loginStyles = (theme: Theme) => createStyles({
   }
 });
 
-export default loginStyles;
+export default joinStyles;

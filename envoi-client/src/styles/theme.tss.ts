@@ -24,6 +24,14 @@ const theme = createMuiTheme({
     secondary: {
       main: "#d64550",
     }
+  },
+  overrides: {
+    MuiFormControl: {
+      root: {
+        width: 240,
+        maxWidth: "100%",
+      }
+    }
   }
 });
 

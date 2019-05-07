@@ -47,7 +47,7 @@ export function setupPassport() {
  */
 export function throwLoginError() {
   const error = new BadRequestError("User");
-  error.message = "Username or password is incorrect!";
+  error.message = "Username or password is incorrect.";
   throw error;
 }
 
