@@ -7,6 +7,7 @@ import JobRunner from '../JobRunner/JobRunner';
 import JobCreate from "../JobCreate/JobCreate";
 import ConnectedJoin from "../Join/ConnectedJoin";
 import ConnectedLogin from "../Login/ConnectedLogin";
+import AlgorithmEdit from "../AlgorithmEdit/AlgorithmEdit";
 import AlgorithmList from '../AlgorithmList/AlgorithmList';
 import ConnectedDashboard from "../Dashboard/ConnectedDashboard";
 
@@ -29,8 +30,8 @@ const Routes: React.FunctionComponent<IUserData> = (
         <Route key={5} path="/jobs/:id/edit" exact={true} component={JobEdit} />,
 
         <Route key={6} path="/algorithms" exact={true} component={AlgorithmList} />,
-        <Route key={7} path="/algorithms/create" exact={true} component={AlgorithmList} />,
-        <Route key={8} path="/algorithms/:id/edit" exact={true} component={AlgorithmList} />
+        <Route key={7} path="/algorithms/create" exact={true} component={AlgorithmEdit} />,
+        <Route key={8} path="/algorithms/:id/edit" exact={true} component={AlgorithmEdit} />
       ]}
 
       {!loggedIn && [

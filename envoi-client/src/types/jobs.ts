@@ -1,5 +1,5 @@
 export interface IJobRequest {
-  id: string;
+  _id: string;
   title: string;
   algorithmId: string;
 }

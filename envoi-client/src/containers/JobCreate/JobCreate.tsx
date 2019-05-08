@@ -79,11 +79,11 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
                   <StepContent>
                     <CreateFinish />
                     <div className={classes.buttonRightWrapper}>
-                      {job.id && <Button 
+                      {job._id && <Button 
                         color="secondary"
                         variant="contained"
                       >
-                        <Link to={`/jobs/${job.id}`}>
+                        <Link to={`/jobs/${job._id}`}>
                           Open job
                         </Link>
                       </Button>}
@@ -102,7 +102,7 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
     const { activeStep } = this.state;
     this.setState({
       activeStep: activeStep + 1,
-      job: { id: "1ab" },
+      job: { _id: "1ab" },
     });
   };
 
