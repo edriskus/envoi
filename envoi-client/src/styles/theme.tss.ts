@@ -26,6 +26,13 @@ const theme = createMuiTheme({
     }
   },
   overrides: {
+    MuiFab: {
+      root: {
+        position: "fixed",
+        bottom: 16,
+        right: 16,
+      },
+    },
     MuiFormControl: {
       root: {
         width: 240,
