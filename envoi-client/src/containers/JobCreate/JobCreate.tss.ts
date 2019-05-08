@@ -4,18 +4,23 @@ const jobCreateStyles = (theme: Theme) => {
   const wrapperStyle = {
     width: "100%",
     display: "flex",
-    paddingTop: theme.spacing.unit * 2,
+    paddingTop: theme.spacing.unit * 2
   };
   return createStyles({
     buttonWrapper: {
       ...wrapperStyle,
-      justifyContent: "space-between",
+      justifyContent: "space-between"
     },
     buttonRightWrapper: {
       ...wrapperStyle,
-      justifyContent: "flex-end",
+      justifyContent: "flex-end"
+    },
+    stepper: {
+      [theme.breakpoints.down("sm")]: {
+        paddingLeft: 0
+      }
     }
   });
-}
+};
 
 export default jobCreateStyles;

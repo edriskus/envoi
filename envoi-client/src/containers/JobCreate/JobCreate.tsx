@@ -40,7 +40,11 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
         <Grid item={true} xs={12}>
           <Card>
             <CardContent>
-              <Stepper activeStep={activeStep} orientation="vertical">
+              <Stepper 
+                orientation="vertical"
+                activeStep={activeStep} 
+                className={classes.stepper}
+              >
                 <Step key={0}>
                   <StepLabel>Algorithm</StepLabel>
                   <StepContent>

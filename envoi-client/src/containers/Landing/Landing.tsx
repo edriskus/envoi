@@ -1,7 +1,7 @@
 import React from "react";
 import landingStyles from "./Landing.tss";
 
-import { Typography, Grid, WithStyles, withStyles } from "@material-ui/core";
+import { Typography, Grid, WithStyles, withStyles, Hidden } from "@material-ui/core";
 
 import screenshot from "../../assets/screenshot.png";
 
@@ -17,17 +17,24 @@ const Landing: React.FunctionComponent<ILandingProps> =
         className={classes.fullWrapper}
       >
         <div className={classes.brandWrapper}>
-          <Typography variant="h1" align="center">Envoi.ts</Typography>
+          <Hidden xsDown={true}>
+            <Typography variant="h1" align="center">Envoi.ts</Typography>
+          </Hidden>
+          <Hidden smUp={true}>
+            <Typography variant="h2" align="center">Envoi.ts</Typography>
+          </Hidden>
           <Typography variant="h5" align="center">
             /ahn-vwa/
           </Typography>
         </div>
-        <div className={classes.screenshotWrapper}>
-          <img 
-            src={screenshot} 
-            className={classes.screenshot} 
-          />
-        </div>
+        <Hidden xsDown={true}>
+          <div className={classes.screenshotWrapper}>
+            <img 
+              src={screenshot} 
+              className={classes.screenshot} 
+            />
+          </div>
+        </Hidden>
       </Grid>
     );
   }
