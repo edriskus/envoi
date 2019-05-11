@@ -5,11 +5,11 @@ const headerStyles = (theme: Theme) => createStyles({
     display: "flex",
     flexGrow: 1,
     justifyContent: "flex-end",
-    alignItems: "center"
+    alignItems: "center",
   },
   logoWrapper: {
     display: "flex",
-    alignItems: "center"
+    alignItems: "center",
   },
   linkActive: {
     "& > button::before": {
@@ -21,8 +21,8 @@ const headerStyles = (theme: Theme) => createStyles({
       borderRadius: "50%",
       position: "absolute",
       bottom: 4,
-      left: `calc(50% - 2px)`
-    }
+      left: `calc(50% - 2px)`,
+    },
   },
   chip: {
     backgroundColor: theme.palette.common.white,

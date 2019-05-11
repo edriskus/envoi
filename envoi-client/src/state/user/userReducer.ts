@@ -10,7 +10,7 @@ const initialState: IUserReduxState = {};
 
 export const userReducer = (
   state: IUserReduxState = initialState,
-  action: Partial<UserAction>
+  action: Partial<UserAction>,
 ): IUserReduxState => {
   switch (action.type) {
     case userConstants.clearError:
@@ -21,20 +21,20 @@ export const userReducer = (
     case userConstants.reqLogin:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case userConstants.resLogin:
       return {
-        ...(action as IReceiveLoginAction).payload
+        ...(action as IReceiveLoginAction).payload,
       };
     case userConstants.reqRegister:
       return {
         ...state,
-        loading: true
+        loading: true,
       };
     case userConstants.resRegister:
       return {
-        ...(action as IReceiveRegisterAction).payload
+        ...(action as IReceiveRegisterAction).payload,
       };
     default:
       return state;

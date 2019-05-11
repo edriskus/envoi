@@ -8,5 +8,5 @@ export const mapUserData = (state: IAppReduxState): IUserData => ({
     email: state.user.email,
     firstName: state.user.firstName,
     lastName: state.user.lastName,
-  }
-})
+  },
+});

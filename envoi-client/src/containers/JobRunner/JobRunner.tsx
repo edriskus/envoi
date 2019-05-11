@@ -21,6 +21,6 @@ const JobRunner: React.FunctionComponent = () => (
       </Card>
     </Grid>
   </>
-)
+);
 
 export default JobRunner;

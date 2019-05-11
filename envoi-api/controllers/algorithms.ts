@@ -49,7 +49,7 @@ export async function createAlgorithm(req: Request, res: Response) {
   const { _id } = req.user;
   const { title } = req.body;
 
-  const errors = combineValidations(validateRequired(title, "Title"));
+  const errors = combineValidations(validateRequired(title, "title", "Title"));
   if (errors) {
     throwValidationError(errors);
   }
@@ -71,7 +71,7 @@ export async function updateAlgorithm(req: Request, res: Response) {
   const { id } = req.params;
   const { title } = req.body;
 
-  const errors = combineValidations(validateRequired(title, "Title"));
+  const errors = combineValidations(validateRequired(title, "title", "Title"));
   if (errors) {
     throwValidationError(errors);
   }

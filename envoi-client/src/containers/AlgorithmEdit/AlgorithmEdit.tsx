@@ -1,4 +1,6 @@
 import React from "react";
+import algorithmEditStyles from "./AlgorithmEdit.tss";
+import FileRead from "../../components/FileRead/FileRead";
 
 import {
   Grid,
@@ -8,16 +10,44 @@ import {
   TextField,
   FormGroup,
   Typography,
+  WithStyles,
+  withStyles,
   CardContent,
+  LinearProgress,
   FormControlLabel,
 } from "@material-ui/core";
 import { IApiError } from "../../types/api";
-import { IAlgorithmRequest } from "../../types/algorithms";
+import { IAlgorithmRequest } from "../../types/algorithm";
+import { RouteComponentProps } from "react-router";
 import { hasError, formatError } from "../../helpers/validations";
+import NotFoundHandler from "../../components/NotFoundHandler/NotFoundHandler";
+import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 
-export interface IAlgorithmEditProps {
+export interface IAlgorithmEditStateProps {
+  loading: boolean;
+  error?: IApiError;
+  algorithm?: Partial<IAlgorithmRequest>;
+}
+
+export interface IAlgorithmEditDispatchProps {
+  clearError(): void;
+  requestGetAlgorithm(algorithmId: string): void;
+  requestEditAlgorithm(algorithm: Partial<IAlgorithmRequest>): void;
+  requestCreateAlgorithm(algorithm: Partial<IAlgorithmRequest>): void;
+}
+
+type IAlgorithmEditStyleProps = WithStyles<typeof algorithmEditStyles>;
+
+export interface IAlgorithmEditOwnProps {
   error?: IApiError;
 }
+
+export type IAlgorithmEditProps =
+  RouteComponentProps<{ id?: string }> &
+  IAlgorithmEditOwnProps &
+  IAlgorithmEditStateProps &
+  IAlgorithmEditDispatchProps &
+  IAlgorithmEditStyleProps;
 
 export interface IAlgorithmEditState {
   algorithm: Partial<IAlgorithmRequest>;
@@ -28,26 +58,63 @@ class AlgorithmEdit extends React.PureComponent<
   IAlgorithmEditState
 > {
   state: IAlgorithmEditState = {
-    algorithm: {}
+    algorithm: {
+      title: "",
+      description: "",
+      inputs: "",
+      outputs: "",
+      gpu: false,
+    },
   };
+
+  componentDidMount() {
+    const { match, requestGetAlgorithm, clearError } = this.props;
+    const { params } = match;
+    if (params.id) {
+      requestGetAlgorithm(params.id);
+    } else {
+      clearError();
+    }
+  }
+
+  componentWillUnmount() {
+    const { clearError } = this.props;
+    clearError();
+  }
+
+  componentDidUpdate(prevProps: IAlgorithmEditProps) {
+    const { algorithm } = this.props;
+    const stateAlgorithm = this.state.algorithm;
+    if (prevProps.loading && !this.props.loading && algorithm) {
+      this.setState({ 
+        algorithm: { ...stateAlgorithm, ...algorithm } 
+      });
+    }
+  }
 
   render() {
     const { algorithm } = this.state;
-    const { error } = this.props;
+    const { error, classes, loading } = this.props;
     const { title, description, inputs, outputs, gpu } = algorithm;
+    
     return (
       <Grid item={true} xs={12}>
+        <NotFoundHandler 
+          error={error}
+          to="/algorithms"
+        />
         <Typography variant="h3" gutterBottom={true}>
           Algorithm
         </Typography>
         <Card>
           <CardContent>
             <form onSubmit={this.handleSubmit}>
+              <ErrorMessage error={error} />
               <Grid container={true} spacing={16}>
                 <Grid item={true} xs={12} md={6}>
                   <TextField
                     InputLabelProps={{
-                      shrink: true
+                      shrink: true,
                     }}
                     error={hasError("title", error)}
                     helperText={formatError("title", error)}
@@ -60,7 +127,7 @@ class AlgorithmEdit extends React.PureComponent<
                   />
                   <TextField
                     InputLabelProps={{
-                      shrink: true
+                      shrink: true,
                     }}
                     multiline={true}
                     fullWidth={true}
@@ -77,7 +144,7 @@ class AlgorithmEdit extends React.PureComponent<
                     <FormControlLabel
                       control={
                         <Switch
-                          checked={gpu}
+                          checked={!!gpu}
                           value="active"
                           color="secondary"
                           onChange={this.handleGpuChange}
@@ -86,11 +153,28 @@ class AlgorithmEdit extends React.PureComponent<
                       label="Use GPU (experimental)"
                     />
                   </FormGroup>
+                  <div className={classes.fileReadWrapper}>
+                    <FileRead
+                      label="Block dispatcher"
+                      description="Dispatcher generates job blocks for distribution"
+                      onRead={this.handleFileRead}
+                    />
+                    <FileRead
+                      label="Client runner"
+                      description="Cient runner contains computational code"
+                      onRead={this.handleFileRead}
+                    />
+                    <FileRead
+                      label="Block reducer"
+                      description="Reducer is run on each block before saving it to DB"
+                      onRead={this.handleFileRead}
+                    />
+                  </div>
                 </Grid>
                 <Grid item={true} xs={12} md={6}>
                   <TextField
                     InputLabelProps={{
-                      shrink: true
+                      shrink: true,
                     }}
                     multiline={true}
                     rows={7}
@@ -106,7 +190,7 @@ class AlgorithmEdit extends React.PureComponent<
                   />
                   <TextField
                     InputLabelProps={{
-                      shrink: true
+                      shrink: true,
                     }}
                     multiline={true}
                     rows={7}
@@ -120,13 +204,21 @@ class AlgorithmEdit extends React.PureComponent<
                     margin="normal"
                     variant="outlined"
                   />
-                  <Button variant="contained" color="primary" type="submit">
-                    Save
-                  </Button>
+                  <div className={classes.buttonWrapper}>
+                    <Button 
+                      type="submit"
+                      color="primary" 
+                      disabled={loading}
+                      variant="contained" 
+                    >
+                      Save
+                    </Button>
+                  </div>
                 </Grid>
               </Grid>
             </form>
           </CardContent>
+          {loading && <LinearProgress />}
         </Card>
       </Grid>
     );
@@ -134,6 +226,14 @@ class AlgorithmEdit extends React.PureComponent<
 
   private handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    const { match, requestCreateAlgorithm, requestEditAlgorithm } = this.props;
+    const { algorithm } = this.state;
+    const { params } = match;
+    if (params.id) {
+      requestEditAlgorithm(algorithm);
+    } else {
+      requestCreateAlgorithm(algorithm);
+    }
   };
 
   private handleGpuChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,28 +242,36 @@ class AlgorithmEdit extends React.PureComponent<
     this.setState({
       algorithm: {
         ...algorithm,
-        gpu: checked
-      }
+        gpu: checked,
+      },
     });
   };
 
   private handleChange = (
-    name: "title" | "description" | "inputs" | "outputs"
+    name: "title" | "description" | "inputs" | "outputs",
   ) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { error, clearError } = this.props;
     const { algorithm } = this.state;
     const { value } = event.target;
     this.setState({
       algorithm: {
         ...algorithm,
-        [name]: value
-      }
+        [name]: value,
+      },
     } as any);
+    if (error) {
+      clearError();
+    }
   };
 
   private handleTitleChange = this.handleChange("title");
   private handleDescriptionChange = this.handleChange("description");
   private handleInputsChange = this.handleChange("inputs");
   private handleOutputsChange = this.handleChange("outputs");
+
+  private handleFileRead = (content: string | ArrayBuffer | null) => {
+    console.log("File read", content);
+  };
 }
 
-export default AlgorithmEdit;
+export default withStyles(algorithmEditStyles)(AlgorithmEdit);

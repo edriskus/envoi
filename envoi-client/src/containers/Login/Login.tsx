@@ -41,7 +41,7 @@ type ILoginProps = ILoginStateProps & ILoginDispatchProps & ILoginStyleProps;
 class Login extends React.PureComponent<ILoginProps, ILoginState> {
   state: ILoginState = {
     username: "",
-    password: ""
+    password: "",
   };
 
   render() {
@@ -65,8 +65,8 @@ class Login extends React.PureComponent<ILoginProps, ILoginState> {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                error={hasError('username', error)}
-                helperText={formatError('username', error)}
+                error={hasError("username", error)}
+                helperText={formatError("username", error)}
                 label="User Name"
                 value={username}
                 name="username"
@@ -78,8 +78,8 @@ class Login extends React.PureComponent<ILoginProps, ILoginState> {
                 InputLabelProps={{
                   shrink: true,
                 }}
-                error={hasError('password', error)}
-                helperText={formatError('password', error)}
+                error={hasError("password", error)}
+                helperText={formatError("password", error)}
                 label="Password"
                 type="password"
                 value={password}
@@ -132,12 +132,12 @@ class Login extends React.PureComponent<ILoginProps, ILoginState> {
   };
 
   private handleChange = (name: "username" | "password") => (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const { error, clearError } = this.props;
     const { value } = event.target;
     this.setState({
-      [name]: value
+      [name]: value,
     } as any);
     if (error) {
       clearError();

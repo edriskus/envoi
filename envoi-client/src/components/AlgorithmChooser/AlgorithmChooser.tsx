@@ -10,6 +10,6 @@ const AlgorithmChooser: React.FunctionComponent = () => (
       <Typography variant="h3">Choose an algorithm</Typography>
     </Hidden>
   </>
-)
+);
 
 export default AlgorithmChooser;

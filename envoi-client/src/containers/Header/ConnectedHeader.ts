@@ -6,10 +6,10 @@ import { mapUserData } from "../../state/user/userEnhancers";
 import { removeTokenAction } from "../../state/user/userActions";
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  logOut: () => dispatch(removeTokenAction())
-})
+  logOut: () => dispatch(removeTokenAction()),
+});
 
 export default connect(
   mapUserData,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Header);

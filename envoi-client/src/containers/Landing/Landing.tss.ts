@@ -21,7 +21,7 @@ const landingStyles = (theme: Theme) => createStyles({
   screenshot: {
     width: "70vw",
     marginBottom: "-16px",
-  }
+  },
 });
 
 export default landingStyles;

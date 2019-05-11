@@ -18,7 +18,7 @@ const loginStyles = (theme: Theme) => createStyles({
   },
   registerButton: {
     margin: `0 ${theme.spacing.unit}px`,
-  }
+  },
 });
 
 export default loginStyles;

@@ -7,4 +7,4 @@ export enum userConstants {
 
   reqRegister = "user/register/req",
   resRegister = "user/register/res",
-};
+}

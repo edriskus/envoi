@@ -1,8 +1,8 @@
-import React from 'react';
-import appStyles from './App.tss';
-import theme from '../../styles/theme.tss';
-import ConnectedRoutes from '../Routes/ConnectedRoutes';
-import ConnectedHeader from '../Header/ConnectedHeader';
+import React from "react";
+import appStyles from "./App.tss";
+import theme from "../../styles/theme.tss";
+import ConnectedRoutes from "../Routes/ConnectedRoutes";
+import ConnectedHeader from "../Header/ConnectedHeader";
 
 import { 
   Grid, 
@@ -10,12 +10,12 @@ import {
   withStyles, 
   CssBaseline, 
   MuiThemeProvider, 
-} from '@material-ui/core';
-import { Component } from 'react';
-import { Provider } from 'react-redux'
-import { configStore } from '../../state/store';
+} from "@material-ui/core";
+import { Component } from "react";
+import { Provider } from "react-redux";
+import { configStore } from "../../state/store";
 import { BrowserRouter as Router } from "react-router-dom";
-import { loadPersistedState } from '../../helpers/localStorage';
+import { loadPersistedState } from "../../helpers/localStorage";
 
 type IAppProps = WithStyles<typeof appStyles>;
 

@@ -10,7 +10,7 @@ import {
   withStyles,
   CardContent,
   Typography,
-  LinearProgress
+  LinearProgress,
 } from "@material-ui/core";
 import { FormEvent } from "react";
 import { IApiError } from "../../types/api";
@@ -35,7 +35,7 @@ export interface IJoinDispatchProps {
     password: string,
     firstName: string,
     email: string,
-    lastName: string
+    lastName: string,
   ): void;
 }
 
@@ -49,7 +49,7 @@ class Join extends React.PureComponent<IJoinProps, IJoinState> {
     password: "",
     firstName: "",
     lastName: "",
-    email: ""
+    email: "",
   };
 
   render() {
@@ -67,7 +67,7 @@ class Join extends React.PureComponent<IJoinProps, IJoinState> {
               <form className={classes.flex} onSubmit={this.handleSubmit}>
                 <TextField
                   InputLabelProps={{
-                    shrink: true
+                    shrink: true,
                   }}
                   required={true}
                   label="First Name"
@@ -79,7 +79,7 @@ class Join extends React.PureComponent<IJoinProps, IJoinState> {
                 />
                 <TextField
                   InputLabelProps={{
-                    shrink: true
+                    shrink: true,
                   }}
                   label="Last Name"
                   value={lastName}
@@ -90,7 +90,7 @@ class Join extends React.PureComponent<IJoinProps, IJoinState> {
                 />
                 <TextField
                   InputLabelProps={{
-                    shrink: true
+                    shrink: true,
                   }}
                   label="Email"
                   required={true}
@@ -102,7 +102,7 @@ class Join extends React.PureComponent<IJoinProps, IJoinState> {
                 />
                 <TextField
                   InputLabelProps={{
-                    shrink: true
+                    shrink: true,
                   }}
                   label="User Name"
                   required={true}
@@ -114,7 +114,7 @@ class Join extends React.PureComponent<IJoinProps, IJoinState> {
                 />
                 <TextField
                   InputLabelProps={{
-                    shrink: true
+                    shrink: true,
                   }}
                   label="Password"
                   required={true}
@@ -155,11 +155,11 @@ class Join extends React.PureComponent<IJoinProps, IJoinState> {
   };
 
   private handleChange = (
-    name: "username" | "password" | "firstName" | "lastName" | "email"
+    name: "username" | "password" | "firstName" | "lastName" | "email",
   ) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     this.setState({
-      [name]: value
+      [name]: value,
     } as any);
   };
 

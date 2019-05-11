@@ -10,19 +10,19 @@ import { IClearErrorAction, IApiError } from "../../types/api";
 
 export const clearErrorAction = 
   (): IClearErrorAction<userConstants.clearError> => ({
-    type: userConstants.clearError
+    type: userConstants.clearError,
   });
 
 export const removeTokenAction = (): IRemoveTokenAction => ({
-  type: userConstants.removeToken
+  type: userConstants.removeToken,
 });
 
 export const requestLoginAction = (
   username: string,
-  password: string
+  password: string,
 ): IRequestLoginAction => ({
   type: userConstants.reqLogin,
-  payload: { username, password }
+  payload: { username, password },
 });
 
 export const receiveLoginAction = (
@@ -33,11 +33,11 @@ export const receiveLoginAction = (
     firstName: string,
     lastName?: string,
   } | {
-    error: IApiError
-  }
+    error: IApiError,
+  },
 ): IReceiveLoginAction => ({
   type: userConstants.resLogin,
-  payload: response
+  payload: response,
 });
 
 export const requestRegisterAction = (
@@ -56,10 +56,10 @@ export const requestRegisterAction = (
     acceptTerms,
     firstName,
     lastName,
-  }
+  },
 });
 
 export const receiveRegisterAction = (): IReceiveRegisterAction => ({
   type: userConstants.resRegister,
-  payload: {}
+  payload: {},
 });

@@ -18,6 +18,6 @@ const Info: React.FunctionComponent = () => (
       deserunt mollit anim id est laborum.
     </Typography>
   </>
-)
+);
 
 export default Info;

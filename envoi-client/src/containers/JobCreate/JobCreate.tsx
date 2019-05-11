@@ -17,7 +17,7 @@ import {
   StepContent,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { IJobRequest } from "../../types/jobs";
+import { IJobRequest } from "../../types/job";
 
 export interface IJobCreateState {
   activeStep: number;
@@ -109,7 +109,7 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
   private handlePrevious = () => {
     const { activeStep } = this.state;
     this.setState({
-      activeStep: activeStep - 1
+      activeStep: activeStep - 1,
     });
   };
 }

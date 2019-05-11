@@ -5,7 +5,7 @@ import { Typography } from "@material-ui/core";
 
 export interface IErrorMessageProps {
   error?: IApiError;
-};
+}
 
 const ErrorMessage: React.FunctionComponent<IErrorMessageProps> = props => {
   const { error } = props;
@@ -21,6 +21,6 @@ const ErrorMessage: React.FunctionComponent<IErrorMessageProps> = props => {
       {error.message}
     </Typography>
   );
-}
+};
 
 export default ErrorMessage;

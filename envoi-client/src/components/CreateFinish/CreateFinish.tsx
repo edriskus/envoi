@@ -11,6 +11,6 @@ const CreateFinish: React.FunctionComponent = () => (
     </Hidden>
     <Typography variant="subtitle1">You can now manage your Job.</Typography>
   </>
-)
+);
 
 export default CreateFinish;

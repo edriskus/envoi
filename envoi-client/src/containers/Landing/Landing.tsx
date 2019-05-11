@@ -37,6 +37,6 @@ const Landing: React.FunctionComponent<ILandingProps> =
         </Hidden>
       </Grid>
     );
-  }
+  };
 
 export default withStyles(landingStyles)(Landing);

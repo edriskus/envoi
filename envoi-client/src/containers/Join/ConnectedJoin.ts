@@ -8,14 +8,14 @@ import { IJoinDispatchProps, IJoinStateProps } from "./Join";
 const mapStateToProps = (state: IAppReduxState): IJoinStateProps => ({
   loggedIn: !!state.user.token,
   loading: !!state.user.loading,
-  error: state.user.error
+  error: state.user.error,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): IJoinDispatchProps => ({
-  requestJoin: (...params) => null
+  requestJoin: (...params) => null,
 });
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Join);

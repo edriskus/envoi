@@ -5,10 +5,10 @@ import { IRequestLoginAction } from "../../types/user";
 
 export function* requestLogin(action: IRequestLoginAction) {
   const response = yield apiFetch(
-    'auth/login',
+    "auth/login",
     null,
-    'POST',
-    action.payload
-  ).catch(e => ({ data: { error: e.response.data }}));  
+    "POST",
+    action.payload,
+  ); 
   yield put(receiveLoginAction(response.data));
 }

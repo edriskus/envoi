@@ -9,7 +9,7 @@ import { requestLoginAction, clearErrorAction } from "../../state/user/userActio
 const mapStateToProps = (state: IAppReduxState): ILoginStateProps => ({
   loggedIn: !!state.user.token,
   loading: !!state.user.loading,
-  error: state.user.error
+  error: state.user.error,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): ILoginDispatchProps => ({
@@ -19,5 +19,5 @@ const mapDispatchToProps = (dispatch: Dispatch): ILoginDispatchProps => ({
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Login);

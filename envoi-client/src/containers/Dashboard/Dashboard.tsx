@@ -15,10 +15,10 @@ type IDashboardStyleProps = WithStyles<typeof dashboardStyles>;
 type IDashboardProps = IUserData & IDashboardStyleProps;
 
 const Dashboard: React.FunctionComponent<IDashboardProps> = (
-  props: IDashboardProps
+  props: IDashboardProps,
 ) => {
   const {
-    user: { firstName }
+    user: { firstName },
   } = props;
   return (
     <>

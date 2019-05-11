@@ -28,7 +28,7 @@ type IHeaderProps =
   IHeaderStypeProps;
 
 interface IHeaderState {
-  menuAnchor: HTMLElement | null
+  menuAnchor: HTMLElement | null;
 }
 
 class Header extends React.PureComponent<IHeaderProps, IHeaderState> {
@@ -40,7 +40,7 @@ class Header extends React.PureComponent<IHeaderProps, IHeaderState> {
     const { 
       classes, 
       loggedIn, 
-      user: { firstName } 
+      user: { firstName }, 
     } = this.props;
     const { menuAnchor } = this.state;
     return (
@@ -94,7 +94,7 @@ class Header extends React.PureComponent<IHeaderProps, IHeaderState> {
         </Toolbar>
       </AppBar>
     );
-  };
+  }
 
   openMenu = (event: React.MouseEvent<HTMLElement>) => {
     this.setState({ menuAnchor: event.currentTarget });

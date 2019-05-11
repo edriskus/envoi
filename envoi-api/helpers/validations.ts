@@ -8,7 +8,7 @@ import { IValidationError } from "../types/validations";
 export function validateRequired(
   value: string | number,
   name: string,
-  entityName: string = "Password"
+  entityName: string,
 ): IValidationError | undefined {
   if ((typeof value === "string" && value.length < 1) || value == null) {
     return { name, message: `${entityName} is required.` };

@@ -1,8 +1,16 @@
+import {
+  requestGetAlgorithm,
+  requestEditAlgorithm,
+  requestListAlgorithm,
+  requestCreateAlgorithm,
+  requestDeleteAlgorithm,
+} from "./algorithm/algorithmSagas";
 import { requestLogin } from "./user/userSagas";
 import { IAppReduxState } from "../types/global";
 import { userConstants } from "./user/userConstants";
 import { persistState } from "../helpers/localStorage";
 import { select, takeLatest, delay } from "redux-saga/effects";
+import { algorithmConstants } from "./algorithm/algorithmConstants";
 
 /**
  * Persists state in localStorage
@@ -12,7 +20,7 @@ function* statePersistor() {
   const { user } = appState;
   yield delay(1000);
   persistState({
-    user
+    user,
   });
 }
 
@@ -24,6 +32,19 @@ function* rootSaga() {
 
   // User sagas
   yield takeLatest(userConstants.reqLogin, requestLogin);
+
+  // Algorithm sagas
+  yield takeLatest(algorithmConstants.reqGetAlgorithm, requestGetAlgorithm);
+  yield takeLatest(
+    algorithmConstants.reqCreateAlgorithm,
+    requestCreateAlgorithm,
+  );
+  yield takeLatest(algorithmConstants.reqEditAlgorithm, requestEditAlgorithm);
+  yield takeLatest(algorithmConstants.reqListAlgorithm, requestListAlgorithm);
+  yield takeLatest(
+    algorithmConstants.reqDeleteAlgorithm,
+    requestDeleteAlgorithm,
+  );
 }
 
 export { rootSaga };

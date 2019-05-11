@@ -10,6 +10,6 @@ const JobConfigurator: React.FunctionComponent = () => (
       <Typography variant="h3">Configure job</Typography>
     </Hidden>
   </>
-)
+);
 
 export default JobConfigurator;

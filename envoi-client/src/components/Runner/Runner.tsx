@@ -9,7 +9,7 @@ type IRunnerProps = WithStyles<typeof runnerStyles>;
 const Runner: React.FunctionComponent<IRunnerProps> = 
   (props: IRunnerProps) => {
     const { classes } = props;
-      return (
+    return (
         <>
         <Typography variant="body1">
           <b>Helpers: </b>
