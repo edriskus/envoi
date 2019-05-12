@@ -12,7 +12,6 @@ const algorithmSchema = new Schema({
   owner: { type: String, required: true },
   description: { type: String, required: true },
   inputs: { type: String, required: true },
-  outputs: { type: String, required: true },
   gpu: { type: Boolean },
   dispatcher: filePointer,
   runner: filePointer,

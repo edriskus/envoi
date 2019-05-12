@@ -18,6 +18,9 @@ const algorithmEditStyles = (theme: Theme) => {
       marginRight: "auto",
       marginLeft: 0,
     },
+    inputsText: {
+      fontFamily: `"Inconsolata", monospace`,
+    },
   });
 };
 

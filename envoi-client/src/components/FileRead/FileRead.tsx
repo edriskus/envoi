@@ -19,7 +19,7 @@ export interface IFileReadOwnProps {
   sizeLimit: number;
   description?: string;
   error?: string | null;
-  value?: IFilePointer;
+  value?: IFilePointer | null;
   onChange(file: IFilePointer | null): void;
 }
 

@@ -19,7 +19,7 @@ const Info: React.FunctionComponent<IInfoProps> = props => {
       <Typography variant="caption" gutterBottom={true}>
         21 April, 2019
       </Typography>
-      <Typography variant="body1">
+      <Typography variant="body1" gutterBottom={true}>
         {description  || <FakeText lines={5} />}
       </Typography>
     </>

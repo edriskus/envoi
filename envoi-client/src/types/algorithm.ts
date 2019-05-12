@@ -12,6 +12,7 @@ export interface IAlgorithmSummary {
   _id: string;
   title: string;
   description: string;
+  inputs: string;
   gpu: boolean;
 
   dispatcher: IFilePointerSummary;
@@ -24,7 +25,6 @@ export interface IAlgorithm {
   title: string;
   description: string;
   inputs: string;
-  outputs: string;
   gpu: boolean;
   dispatcher: IFilePointer;
   runner: IFilePointer;

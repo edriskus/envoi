@@ -9,6 +9,7 @@ export const algorithmReducer = (
   action: Partial<AlgorithmAction>,
 ): IAlgorithmReduxState => {
   const { error, loading, ...cleanState } = state;
+  const { single, ...withoutSingle } = cleanState;
   switch (action.type) {
     case algorithmConstants.clearError:
       return {
@@ -70,16 +71,19 @@ export const algorithmReducer = (
           ...action.payload,
         };
       } else {
-        const { single, ...rest } = cleanState;
-        return rest;
+        return withoutSingle;
       }
-    case algorithmConstants.reqCreateAlgorithm:
     case algorithmConstants.reqEditAlgorithm:
     case algorithmConstants.reqListAlgorithm:
-    case algorithmConstants.reqGetAlgorithm:
     case algorithmConstants.reqDeleteAlgorithm:
       return {
         ...cleanState,
+        loading: true,
+      };
+    case algorithmConstants.reqCreateAlgorithm:
+    case algorithmConstants.reqGetAlgorithm:
+      return {
+        ...withoutSingle,
         loading: true,
       };
     default:

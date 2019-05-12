@@ -16,6 +16,7 @@ import { Add } from "@material-ui/icons";
 import { IApiError } from "../../types/api";
 import { IJobSummary } from "../../types/job";
 import { RouteComponentProps } from "react-router";
+import EmptyRow from "../../components/EmptyRow/EmptyRow";
 
 export interface IJobListStateProps {
   loading: boolean;
@@ -61,6 +62,11 @@ class JobList extends React.PureComponent<IJobListProps> {
               ))}
             </TableBody>
           </Table>
+          <EmptyRow
+            name="jobs"
+            list={list}
+            loading={loading} 
+          />
           <Fab
             color="primary"
             aria-label="New Job"

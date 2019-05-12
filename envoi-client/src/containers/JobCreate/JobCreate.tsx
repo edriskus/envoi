@@ -105,7 +105,7 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
                     />
                     <div className={classes.buttonRightWrapper}>
                       <Button
-                        color="secondary"
+                        color="primary"
                         variant="contained"
                         onClick={this.handleSelectAlgorithm}
                         disabled={!this.firstValid()}
@@ -128,7 +128,7 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
                     <div className={classes.buttonWrapper}>
                       <Button onClick={this.handlePrevious}>Previous</Button>
                       <Button
-                        color="secondary"
+                        color="primary"
                         disabled={loading}
                         variant="contained"
                         onClick={this.handleSubmit}
@@ -144,7 +144,7 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
                     <CreateFinish />
                     <div className={classes.buttonRightWrapper}>
                       {job._id && (
-                        <Button color="secondary" variant="contained">
+                        <Button color="primary" variant="contained">
                           <Link to={`/jobs/${job._id}`}>Open job</Link>
                         </Button>
                       )}

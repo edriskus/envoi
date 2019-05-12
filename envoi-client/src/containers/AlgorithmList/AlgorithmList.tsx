@@ -18,6 +18,7 @@ import { IApiError } from "../../types/api";
 import { RouteComponentProps } from "react-router";
 import { IAlgorithmSummary } from "../../types/algorithm";
 import FileInfo from "../../components/FileInfo/FileInfo";
+import EmptyRow from "../../components/EmptyRow/EmptyRow";
 
 export interface IAlgorithmListStateProps {
   loading: boolean;
@@ -91,6 +92,11 @@ class AlgorithmList extends React.PureComponent<IAlgorithmListProps> {
               ))}
             </TableBody>
           </Table>
+          <EmptyRow
+            list={list}
+            name="algorithm"
+            loading={loading} 
+          />
           <Fab
             color="primary"
             aria-label="New Algorithm"

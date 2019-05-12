@@ -5,6 +5,7 @@ import {
   IApiErrorResponse,
   IApiDeleteReponse,
 } from "./api";
+import { IFilePointer, IFilePointerSummary } from "./algorithm";
 
 export type IJobRequest = IJob;
 
@@ -12,6 +13,7 @@ export interface IJobSummary {
   _id: string;
   title: string;
   description: string;
+  inputs: IFilePointerSummary;
 }
 
 export interface IJob {
@@ -19,6 +21,7 @@ export interface IJob {
   title: string;
   description: string;
   algorithmId: string;
+  inputs: IFilePointer;
 }
 
 export interface IJobReduxState extends ILoadableReduxState {

@@ -3,9 +3,11 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 import { IApiError } from "../../types/api";
 import { IJobRequest } from "../../types/job";
-import { IAlgorithmSummary } from "../../types/algorithm";
+import { IAlgorithmSummary, IFilePointer } from "../../types/algorithm";
 import { hasError, formatError } from "../../helpers/validations";
 import { Typography, Hidden, Grid, TextField } from "@material-ui/core";
+import FileRead from "../FileRead/FileRead";
+import FileDownload from "../FileDownload/FileDownload";
 
 export interface IJobConfiguratorProps {
   error?: IApiError;
@@ -17,21 +19,23 @@ export interface IJobConfiguratorProps {
 
 class JobConfigurator extends React.PureComponent<IJobConfiguratorProps> {
   render() {
-    const { error, job } = this.props;
+    const { error, job, algorithm } = this.props;
     const { 
+      inputs,
       title = "", 
       description = "", 
     } = job || {
       title: "",
+      inputs: null,
       description: "",
     };
     return (
       <>
         <Hidden xsDown={true}>
-          <Typography variant="h2">Configure job</Typography>
+          <Typography variant="h2" gutterBottom={true}>Configure job</Typography>
         </Hidden>
         <Hidden smUp={true}>
-          <Typography variant="h3">Configure job</Typography>
+          <Typography variant="h3" gutterBottom={true}>Configure job</Typography>
         </Hidden>
         <ErrorMessage error={error} />
         <Grid container={true} spacing={16}>
@@ -66,7 +70,19 @@ class JobConfigurator extends React.PureComponent<IJobConfiguratorProps> {
             />
           </Grid>
           <Grid item={true} xs={12} md={6}>
-            ...
+            <FileDownload 
+              content={algorithm && algorithm.inputs}
+              fileName="inputs.json"
+              label="Input data structure"
+              description="Use this file as a starting point for input data file"
+            />
+            <FileRead
+              label="Input data"
+              error={formatError("inputs", error)}
+              description="Algorithms use this data to produce results"
+              value={inputs}
+              onChange={this.handleInputsChange}
+            />
           </Grid>
         </Grid>
       </>
@@ -74,13 +90,26 @@ class JobConfigurator extends React.PureComponent<IJobConfiguratorProps> {
   }
 
   private handleChange = (
-    name: "title" | "description" | "inputs" | "outputs",
+    name: "title" | "description" | "inputs",
   ) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const { job, error, clearError, onUpdate } = this.props;
     const { value } = event.target;
     onUpdate({
       ...job,
       [name]: value,
+    } as any);
+    if (error) {
+      clearError();
+    }
+  };
+
+  private handleInputsChange = (
+    file: IFilePointer | null,
+  ) => {
+    const { job, error, clearError, onUpdate } = this.props;
+    onUpdate({
+      ...job,
+      inputs: file,
     } as any);
     if (error) {
       clearError();

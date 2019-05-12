@@ -62,8 +62,7 @@ class AlgorithmEdit extends React.PureComponent<
     algorithm: {
       title: "",
       description: "",
-      inputs: "",
-      outputs: "",
+      inputs: "{\n  \n}",
       gpu: false,
     },
   };
@@ -111,7 +110,6 @@ class AlgorithmEdit extends React.PureComponent<
       title,
       inputs,
       runner,
-      outputs,
       reducer,
       dispatcher,
       description,
@@ -201,6 +199,7 @@ class AlgorithmEdit extends React.PureComponent<
                     InputLabelProps={{
                       shrink: true,
                     }}
+                    className={classes.inputsText}
                     multiline={true}
                     rows={7}
                     fullWidth={true}
@@ -210,22 +209,6 @@ class AlgorithmEdit extends React.PureComponent<
                     value={inputs}
                     name="inputs"
                     onChange={this.handleInputsChange}
-                    margin="normal"
-                    variant="outlined"
-                  />
-                  <TextField
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    multiline={true}
-                    rows={7}
-                    fullWidth={true}
-                    error={hasError("outputs", error)}
-                    helperText={formatError("outputs", error)}
-                    label="Output data structure"
-                    value={outputs}
-                    name="outputs"
-                    onChange={this.handleOutputsChange}
                     margin="normal"
                     variant="outlined"
                   />
@@ -266,7 +249,7 @@ class AlgorithmEdit extends React.PureComponent<
 
   private handleCancel = () => {
     const { history } = this.props;
-    history.goBack();
+    history.push("/algorithms");
   };
 
   private handleSubmit = (event: React.FormEvent) => {
@@ -293,7 +276,7 @@ class AlgorithmEdit extends React.PureComponent<
   };
 
   private handleChange = (
-    name: "title" | "description" | "inputs" | "outputs",
+    name: "title" | "description" | "inputs",
   ) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const { error, clearError } = this.props;
     const { algorithm } = this.state;
@@ -312,7 +295,6 @@ class AlgorithmEdit extends React.PureComponent<
   private handleTitleChange = this.handleChange("title");
   private handleDescriptionChange = this.handleChange("description");
   private handleInputsChange = this.handleChange("inputs");
-  private handleOutputsChange = this.handleChange("outputs");
 
   private handleFileRead = (name: "dispatcher" | "runner" | "reducer") => (
     file: IFilePointer | null,
