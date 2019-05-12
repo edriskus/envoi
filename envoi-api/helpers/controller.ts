@@ -66,8 +66,6 @@ export function spreadFilePointer(file: IFilePointer, name: string) {
   };
   if (file.content) {
     value[`${name}.content`] = file.content;
-  }
-  console.log("Spread", JSON.stringify(value));
-  
+  }  
   return value;
 }

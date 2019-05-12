@@ -39,7 +39,7 @@ const AlgorithmChooser: React.FunctionComponent<IAlgorithmChooserProps> = props 
                 <Typography variant="h5" gutterBottom={true}>
                   {algorithm.title}
                 </Typography>
-                <Typography>
+                <Typography className={classes.description}>
                   {algorithm.description}
                 </Typography>
               </CardContent>

@@ -11,6 +11,10 @@ const algorithmChooserStyles = (theme: Theme) => {
       paddingTop: theme.spacing.unit * 2,
       paddingBottom: theme.spacing.unit,
     },
+    description: {
+      maxHeight: 200,
+      overflow: "auto",
+    },
   });
 };
 

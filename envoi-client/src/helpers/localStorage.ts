@@ -7,7 +7,7 @@ export const loadPersistedState = (): IAppReduxState | undefined => {
     const rawState = localStorage.getItem(storageKey);
     return rawState ? JSON.parse(rawState) : undefined;
   } catch (error) {
-    console.log(error);
+    console.warn(error);
     return undefined;
   }
 };
@@ -17,6 +17,6 @@ export const persistState = (state: Partial<IAppReduxState>) => {
     const stringifiedState = JSON.stringify(state);
     localStorage.setItem(storageKey, stringifiedState);
   } catch (error) {
-    console.log(error);
+    console.warn(error);
   }
 };

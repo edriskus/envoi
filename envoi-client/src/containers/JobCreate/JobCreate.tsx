@@ -18,11 +18,12 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { IJobRequest } from "../../types/job";
+import { IJobRequest, IJob } from "../../types/job";
 import { IApiError } from "../../types/api";
 import { IAlgorithmSummary } from "../../types/algorithm";
 
 export interface IJobCreateStateProps {
+  job?: IJob;
   loading: boolean;
   error?: IApiError;
   algorithmsLoading: boolean;
@@ -30,24 +31,27 @@ export interface IJobCreateStateProps {
 }
 
 export interface IJobCreateDispatchProps {
+  clearError(): void;
   requestListAlgorithm(): void;
+  requestCreateJob(job: Partial<IJobRequest>): void;
 }
 
 export interface IJobCreateState {
   activeStep: number;
+  submitted: boolean;
   job: Partial<IJobRequest>;
 }
 
 type IJobCreateStyleProps = WithStyles<typeof jobCreateStyles>;
 
-export type IJobCreateProps = 
-  IJobCreateStateProps &
+export type IJobCreateProps = IJobCreateStateProps &
   IJobCreateDispatchProps &
   IJobCreateStyleProps;
 
 class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
   state: IJobCreateState = {
     activeStep: 0,
+    submitted: false,
     job: {},
   };
 
@@ -56,8 +60,28 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
     requestListAlgorithm();
   }
 
+  componentDidUpdate(prevProps: IJobCreateProps) {
+    const { loading, job } = this.props;
+    const { submitted } = this.state;    
+    if (prevProps.loading && !loading) {
+      if (job && job._id && submitted) {
+        this.setState({
+          activeStep: 2,
+          job,
+        });
+      }
+    }
+  }
+
   render() {
-    const { classes, algorithmsLoading, algorithmList } = this.props;
+    const {
+      error,
+      classes,
+      loading,
+      clearError,
+      algorithmList,
+      algorithmsLoading,
+    } = this.props;
     const { activeStep, job } = this.state;
     const { algorithmId } = job;
     return (
@@ -66,42 +90,51 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
           <Card>
             {algorithmsLoading && <LinearProgress />}
             <CardContent>
-              <Stepper 
+              <Stepper
                 orientation="vertical"
-                activeStep={activeStep} 
+                activeStep={activeStep}
                 className={classes.stepper}
               >
                 <Step key={0}>
                   <StepLabel>Algorithm</StepLabel>
                   <StepContent>
-                    <AlgorithmChooser 
+                    <AlgorithmChooser
                       value={algorithmId}
-                      list={algorithmList} 
+                      list={algorithmList}
                       onChange={this.handleAlgorithmChange}
                     />
                     <div className={classes.buttonRightWrapper}>
-                      <Button 
+                      <Button
                         color="secondary"
                         variant="contained"
-                        onClick={this.handleNext}
+                        onClick={this.handleSelectAlgorithm}
                         disabled={!this.firstValid()}
-                      >Next</Button>
+                      >
+                        Next
+                      </Button>
                     </div>
                   </StepContent>
                 </Step>
                 <Step key={1}>
                   <StepLabel>Configuration</StepLabel>
                   <StepContent>
-                    <JobConfigurator />
+                    <JobConfigurator
+                      job={job}
+                      error={error}
+                      clearError={clearError}
+                      onUpdate={this.handleJobUpdate}
+                      algorithm={this.selectedAlgorithm()}
+                    />
                     <div className={classes.buttonWrapper}>
+                      <Button onClick={this.handlePrevious}>Previous</Button>
                       <Button
-                        onClick={this.handlePrevious}
-                      >Previous</Button>
-                      <Button 
                         color="secondary"
+                        disabled={loading}
                         variant="contained"
-                        onClick={this.handleNext}
-                      >Next</Button>
+                        onClick={this.handleSubmit}
+                      >
+                        Next
+                      </Button>
                     </div>
                   </StepContent>
                 </Step>
@@ -110,19 +143,17 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
                   <StepContent>
                     <CreateFinish />
                     <div className={classes.buttonRightWrapper}>
-                      {job._id && <Button 
-                        color="secondary"
-                        variant="contained"
-                      >
-                        <Link to={`/jobs/${job._id}`}>
-                          Open job
-                        </Link>
-                      </Button>}
+                      {job._id && (
+                        <Button color="secondary" variant="contained">
+                          <Link to={`/jobs/${job._id}`}>Open job</Link>
+                        </Button>
+                      )}
                     </div>
                   </StepContent>
                 </Step>
               </Stepper>
             </CardContent>
+            {loading && <LinearProgress />}
           </Card>
         </Grid>
       </>
@@ -133,7 +164,24 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
     const { job } = this.state;
     const { algorithmId } = job;
     return algorithmId != null && algorithmId.length > 0;
-  }
+  };
+
+  private selectedAlgorithm = () => {
+    const { algorithmList } = this.props;
+    const { job } = this.state;
+    const { algorithmId } = job;
+    if (algorithmId && Array.isArray(algorithmList)) {
+      return algorithmList.find(algorithm => algorithm._id === algorithmId);
+    } else {
+      return undefined;
+    }
+  };
+
+  private handleJobUpdate = (job: Partial<IJobRequest>) => {
+    this.setState({
+      job,
+    });
+  };
 
   private handleAlgorithmChange = (algorithmId: string) => {
     const { job } = this.state;
@@ -143,12 +191,22 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
         algorithmId,
       },
     });
-  }
+  };
 
-  private handleNext = () => {
-    const { activeStep } = this.state;
+  private handleSelectAlgorithm = () => {
+    if (this.firstValid()) {
+      this.setState({
+        activeStep: 1,
+      });
+    }
+  };
+
+  private handleSubmit = () => {
+    const { requestCreateJob } = this.props;
+    const { job } = this.state;
+    requestCreateJob(job);
     this.setState({
-      activeStep: activeStep + 1,
+      submitted: true,
     });
   };
 
