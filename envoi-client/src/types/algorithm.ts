@@ -13,6 +13,10 @@ export interface IAlgorithmSummary {
   title: string;
   description: string;
   gpu: boolean;
+
+  dispatcher: IFilePointerSummary;
+  runner: IFilePointerSummary;
+  reducer: IFilePointerSummary;
 }
 
 export interface IAlgorithm {
@@ -22,9 +26,20 @@ export interface IAlgorithm {
   inputs: string;
   outputs: string;
   gpu: boolean;
-  dispatcher: string;
-  runner: string;
-  reducer: string;
+  dispatcher: IFilePointer;
+  runner: IFilePointer;
+  reducer: IFilePointer;
+}
+
+export interface IFilePointer {
+  name: string;
+  size: number;
+  content?: string | ArrayBuffer | null;
+}
+
+export interface IFilePointerSummary {
+  name: string;
+  size: number;
 }
 
 export interface IAlgorithmReduxState extends ILoadableReduxState {

@@ -5,14 +5,15 @@ import {
   IAlgorithmEditDispatchProps,
 } from "./AlgorithmEdit";
 import {
+  clearErrorAction,
+  requestGetAlgorithmAction,
   requestEditAlgorithmAction,
   requestCreateAlgorithmAction,
-  requestGetAlgorithmAction,
-  clearErrorAction,
+  requestDeleteAlgorithmAction,
 } from "../../state/algorithm/algorithmActions";
+import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
-import { Dispatch, compose } from "redux";
 import { IAppReduxState } from "../../types/global";
 
 const mapStateToProps = (state: IAppReduxState): IAlgorithmEditStateProps => ({
@@ -27,6 +28,8 @@ const mapDispatchToProps = (
   clearError: () => dispatch(clearErrorAction()),
   requestGetAlgorithm: (...params) =>
     dispatch(requestGetAlgorithmAction(...params)),
+  requestDeleteAlgorithm: (...params) =>
+    dispatch(requestDeleteAlgorithmAction(...params)),
   requestEditAlgorithm: (...params) =>
     dispatch(requestEditAlgorithmAction(...params)),
   requestCreateAlgorithm: (...params) =>

@@ -16,6 +16,8 @@ export interface IApiErrorResponse {
 
 export interface IApiDeleteReponse {
   n: number;
+  ok: number;
+  deletedCount: number;
 }
 
 export interface IApiError {

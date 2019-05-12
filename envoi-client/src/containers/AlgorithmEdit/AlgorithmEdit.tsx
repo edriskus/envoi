@@ -17,11 +17,12 @@ import {
   FormControlLabel,
 } from "@material-ui/core";
 import { IApiError } from "../../types/api";
-import { IAlgorithmRequest } from "../../types/algorithm";
 import { RouteComponentProps } from "react-router";
+import { IAlgorithmRequest, IFilePointer } from "../../types/algorithm";
 import { hasError, formatError } from "../../helpers/validations";
-import NotFoundHandler from "../../components/NotFoundHandler/NotFoundHandler";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
+import NotFoundHandler from "../../components/NotFoundHandler/NotFoundHandler";
+import DelayButton from "../../components/DelayButton/DelayButton";
 
 export interface IAlgorithmEditStateProps {
   loading: boolean;
@@ -32,6 +33,7 @@ export interface IAlgorithmEditStateProps {
 export interface IAlgorithmEditDispatchProps {
   clearError(): void;
   requestGetAlgorithm(algorithmId: string): void;
+  requestDeleteAlgorithm(algorithmId: string): void;
   requestEditAlgorithm(algorithm: Partial<IAlgorithmRequest>): void;
   requestCreateAlgorithm(algorithm: Partial<IAlgorithmRequest>): void;
 }
@@ -42,8 +44,7 @@ export interface IAlgorithmEditOwnProps {
   error?: IApiError;
 }
 
-export type IAlgorithmEditProps =
-  RouteComponentProps<{ id?: string }> &
+export type IAlgorithmEditProps = RouteComponentProps<{ id?: string }> &
   IAlgorithmEditOwnProps &
   IAlgorithmEditStateProps &
   IAlgorithmEditDispatchProps &
@@ -83,26 +84,40 @@ class AlgorithmEdit extends React.PureComponent<
   }
 
   componentDidUpdate(prevProps: IAlgorithmEditProps) {
-    const { algorithm } = this.props;
+    const { algorithm, history } = this.props;
     const stateAlgorithm = this.state.algorithm;
-    if (prevProps.loading && !this.props.loading && algorithm) {
-      this.setState({ 
-        algorithm: { ...stateAlgorithm, ...algorithm } 
-      });
+    
+    if (prevProps.loading && !this.props.loading) {
+      if (algorithm) {
+        this.setState({
+          algorithm: { ...stateAlgorithm, ...algorithm },
+        });
+      } else {
+        history.goBack();
+      }
     }
   }
 
   render() {
     const { algorithm } = this.state;
-    const { error, classes, loading } = this.props;
-    const { title, description, inputs, outputs, gpu } = algorithm;
-    
+    const { error, classes, loading, match } = this.props;
+    const { params } = match;
+    const {
+      gpu,
+      title,
+      inputs,
+      runner,
+      outputs,
+      reducer,
+      dispatcher,
+      description,
+    } = algorithm;
+
+    const isNew = !params.id;
+
     return (
       <Grid item={true} xs={12}>
-        <NotFoundHandler 
-          error={error}
-          to="/algorithms"
-        />
+        <NotFoundHandler error={error} to="/algorithms" />
         <Typography variant="h3" gutterBottom={true}>
           Algorithm
         </Typography>
@@ -156,18 +171,24 @@ class AlgorithmEdit extends React.PureComponent<
                   <div className={classes.fileReadWrapper}>
                     <FileRead
                       label="Block dispatcher"
+                      error={formatError("dispatcher", error)}
                       description="Dispatcher generates job blocks for distribution"
-                      onRead={this.handleFileRead}
+                      value={dispatcher}
+                      onChange={this.handleDispatcherChange}
                     />
                     <FileRead
                       label="Client runner"
+                      error={formatError("runner", error)}
                       description="Cient runner contains computational code"
-                      onRead={this.handleFileRead}
+                      value={runner}
+                      onChange={this.handleRunnerChange}
                     />
                     <FileRead
                       label="Block reducer"
+                      error={formatError("reducer", error)}
                       description="Reducer is run on each block before saving it to DB"
-                      onRead={this.handleFileRead}
+                      value={reducer}
+                      onChange={this.handleReducerChange}
                     />
                   </div>
                 </Grid>
@@ -205,11 +226,26 @@ class AlgorithmEdit extends React.PureComponent<
                     variant="outlined"
                   />
                   <div className={classes.buttonWrapper}>
-                    <Button 
+                    {!isNew && <DelayButton
+                      className={classes.deleteButton}
+                      onClick={this.handleDelete}
+                      triggeredLabel="Confirm"
+                      color="secondary"
+                    >
+                      Delete
+                    </DelayButton>}
+                    <Button
+                      type="button"
+                      onClick={this.handleCancel}
+                      color="primary"
+                    >
+                      Back
+                    </Button>
+                    <Button
                       type="submit"
-                      color="primary" 
+                      color="primary"
                       disabled={loading}
-                      variant="contained" 
+                      variant="contained"
                     >
                       Save
                     </Button>
@@ -223,6 +259,11 @@ class AlgorithmEdit extends React.PureComponent<
       </Grid>
     );
   }
+
+  private handleCancel = () => {
+    const { history } = this.props;
+    history.goBack();
+  };
 
   private handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -269,9 +310,33 @@ class AlgorithmEdit extends React.PureComponent<
   private handleInputsChange = this.handleChange("inputs");
   private handleOutputsChange = this.handleChange("outputs");
 
-  private handleFileRead = (content: string | ArrayBuffer | null) => {
-    console.log("File read", content);
+  private handleFileRead = (name: "dispatcher" | "runner" | "reducer") => (
+    file: IFilePointer | null,
+  ) => {
+    const { error, clearError } = this.props;
+    const { algorithm } = this.state;
+    this.setState({
+      algorithm: {
+        ...algorithm,
+        [name]: file,
+      },
+    } as any);
+    if (error) {
+      clearError();
+    }
   };
+
+  private handleDispatcherChange = this.handleFileRead("dispatcher");
+  private handleRunnerChange = this.handleFileRead("runner");
+  private handleReducerChange = this.handleFileRead("reducer");
+
+  private handleDelete = () => {
+    const { requestDeleteAlgorithm, match } = this.props;
+    const { params } = match;
+    if (params.id) {
+      requestDeleteAlgorithm(params.id);
+    }
+  }
 }
 
 export default withStyles(algorithmEditStyles)(AlgorithmEdit);

@@ -6,11 +6,18 @@ const algorithmEditStyles = (theme: Theme) => {
       display: "flex",
       paddingTop: theme.spacing.unit,
       justifyContent: "flex-end",
+      "& > *": {
+        marginLeft: theme.spacing.unit,
+      },
     },
     fileReadWrapper: {
       display: "flex",
       flexDirection: "column",
     },
+    deleteButton: {
+      marginRight: "auto",
+      marginLeft: 0,
+    }
   });
 };
 

@@ -10,14 +10,39 @@ import {
   TableCell,
   TableHead,
   Typography,
+  LinearProgress,
+  Hidden,
 } from "@material-ui/core";
-import { Add } from "@material-ui/icons";
-import { withRouter, RouteComponentProps } from "react-router";
+import { Add, Done } from "@material-ui/icons";
+import { IApiError } from "../../types/api";
+import { RouteComponentProps } from "react-router";
+import { IAlgorithmSummary } from "../../types/algorithm";
+import FileInfo from "../../components/FileInfo/FileInfo";
 
-type IAlgorithmListProps = RouteComponentProps;
+export interface IAlgorithmListStateProps {
+  loading: boolean;
+  error?: IApiError;
+  list?: IAlgorithmSummary[];
+}
+
+export interface IAlgorithmListDispatchProps {
+  requestListAlgorithm(): void;
+}
+
+type IAlgorithmListProps = 
+  IAlgorithmListStateProps &
+  IAlgorithmListDispatchProps &
+  RouteComponentProps;
 
 class AlgorithmList extends React.PureComponent<IAlgorithmListProps> {
- render() {
+
+  componentDidMount() {
+    const { requestListAlgorithm } = this.props;
+    requestListAlgorithm();
+  }
+
+  render() {
+    const { list = [], loading } = this.props;
     return (
       <Grid item={true} xs={12}>
         <Typography variant="h3" gutterBottom={true}>
@@ -27,17 +52,41 @@ class AlgorithmList extends React.PureComponent<IAlgorithmListProps> {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell align="right">Name</TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Uses GPU</TableCell>
+                <Hidden smDown={true}>
+                  <TableCell>Dispatcher</TableCell>
+                </Hidden>
+                <Hidden xsDown={true}>
+                  <TableCell>Runner</TableCell>
+                </Hidden>
+                <Hidden smDown={true}>
+                  <TableCell>Reducer</TableCell>
+                </Hidden>
               </TableRow>
             </TableHead>
             <TableBody>
-              {[1, 2, 3, 4].map((row, i) => (
-                <TableRow key={i} onClick={this.openAlgorithm(i)}>
-                  <TableCell component="th" scope="row">
-                    {row}
-                  </TableCell>
-                  <TableCell align="right">{row}</TableCell>
+              {list.map((row, i) => (
+                <TableRow key={i} onClick={this.openAlgorithm(row._id)}>
+                  <TableCell>{row.title}</TableCell>
+                  <TableCell>{row.gpu && (
+                    <Done />
+                  )}</TableCell>
+                  <Hidden smDown={true}>
+                    <TableCell>
+                      <FileInfo filePointer={row.dispatcher} />
+                    </TableCell>
+                  </Hidden>
+                  <Hidden xsDown={true}>
+                    <TableCell>
+                      <FileInfo filePointer={row.runner} />
+                    </TableCell>
+                  </Hidden>
+                  <Hidden smDown={true}>
+                    <TableCell>
+                      <FileInfo filePointer={row.reducer} />
+                    </TableCell>
+                  </Hidden>
                 </TableRow>
               ))}
             </TableBody>
@@ -49,14 +98,15 @@ class AlgorithmList extends React.PureComponent<IAlgorithmListProps> {
           >
             <Add />
           </Fab>
+          {loading && <LinearProgress />}
         </Paper>
       </Grid>
     );
   }
 
-  private openAlgorithm = (i: number) => () => {
+  private openAlgorithm = (id: string) => () => {
     const { history } = this.props;
-    history.push(`/algorithms/${i}/edit`);
+    history.push(`/algorithms/${id}/edit`);
   }
 
   private createAlgorithm = () => {
@@ -65,4 +115,4 @@ class AlgorithmList extends React.PureComponent<IAlgorithmListProps> {
   }
 }
 
-export default withRouter(AlgorithmList);
+export default AlgorithmList;

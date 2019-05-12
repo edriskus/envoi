@@ -3,7 +3,8 @@ import Algorithm from "../models/algorithm";
 import {
   validateRequired,
   combineValidations,
-  throwValidationError
+  throwValidationError,
+  validateFilePointer
 } from "../helpers/validations";
 import { Response, Request } from "express";
 import { throwNotFound } from "../helpers/controller";
@@ -47,16 +48,40 @@ export async function getAlgorithms(req: Request, res: Response) {
  */
 export async function createAlgorithm(req: Request, res: Response) {
   const { _id } = req.user;
-  const { title } = req.body;
+  const { 
+    title,
+    description,
+    inputs,
+    outputs,
+    gpu,
+    dispatcher,
+    runner,
+    reducer,
+  } = req.body;
 
-  const errors = combineValidations(validateRequired(title, "title", "Title"));
+  const errors = combineValidations(
+    validateRequired(title, "title", "Title"),
+    validateRequired(description, "description", "Description"),
+    validateRequired(inputs, "inputs", "Inputs"),
+    validateRequired(outputs, "outputs", "Outputs"),
+    validateFilePointer(dispatcher, "dispatcher", "Dispatcher"),
+    validateFilePointer(runner, "runner", "Runner"),
+    validateFilePointer(reducer, "reducer", "Reducer"),
+  );
   if (errors) {
     throwValidationError(errors);
   }
 
   const algorithm = await Algorithm.create({
     owner: _id,
-    title
+    title,
+    description,
+    inputs,
+    outputs,
+    gpu,
+    dispatcher,
+    runner,
+    reducer,
   });
   res.status(201).json(algorithm);
 }
@@ -69,9 +94,26 @@ export async function createAlgorithm(req: Request, res: Response) {
 export async function updateAlgorithm(req: Request, res: Response) {
   const { _id } = req.user;
   const { id } = req.params;
-  const { title } = req.body;
+  const { 
+    title,
+    description,
+    inputs,
+    outputs,
+    gpu,
+    dispatcher,
+    runner,
+    reducer,
+  } = req.body;
 
-  const errors = combineValidations(validateRequired(title, "title", "Title"));
+  const errors = combineValidations(
+    validateRequired(title, "title", "Title"),
+    validateRequired(description, "description", "Description"),
+    validateRequired(inputs, "inputs", "Inputs"),
+    validateRequired(outputs, "outputs", "Outputs"),
+    validateFilePointer(dispatcher, "dispatcher", "Dispatcher"),
+    validateFilePointer(runner, "runner", "Runner"),
+    validateFilePointer(reducer, "reducer", "Reducer"),
+  );
   if (errors) {
     throwValidationError(errors);
   }
@@ -83,7 +125,14 @@ export async function updateAlgorithm(req: Request, res: Response) {
     },
     {
       $set: {
-        title
+        title,
+        description,
+        inputs,
+        outputs,
+        gpu,
+        dispatcher,
+        runner,
+        reducer,
       }
     },
     {

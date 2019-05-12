@@ -7,9 +7,9 @@ import JobRunner from "../JobRunner/JobRunner";
 import JobCreate from "../JobCreate/JobCreate";
 import ConnectedJoin from "../Join/ConnectedJoin";
 import ConnectedLogin from "../Login/ConnectedLogin";
-import AlgorithmList from "../AlgorithmList/AlgorithmList";
 import ConnectedDashboard from "../Dashboard/ConnectedDashboard";
 import ConnectedAlgorithmEdit from "../AlgorithmEdit/ConnectedAlgorithmEdit";
+import ConnectedAlgorithmList from "../AlgorithmList/ConnectedAlgorithmList";
 
 import { IUserData } from "../../types/user";
 import { Route, Redirect, Switch } from "react-router";
@@ -41,7 +41,7 @@ const Routes: React.FunctionComponent<IUserData> = (props: IUserData) => {
           key={6}
           path="/algorithms"
           exact={true}
-          component={AlgorithmList}
+          component={ConnectedAlgorithmList}
         />,
         <Route
           key={7}

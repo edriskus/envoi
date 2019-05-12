@@ -1,5 +1,6 @@
 import { BadRequestError } from "../types/controller";
 import { IValidationError } from "../types/validations";
+import { IFilePointer } from "../types/algorithm";
 
 /**
  *
@@ -64,6 +65,21 @@ export function validateTrue(
 ): IValidationError | undefined {
   if (value === true) {
     return { name, message: `${entityName} must be selected.` };
+  }
+  return undefined;
+}
+
+/**
+ *
+ * @param value
+ */
+export function validateFilePointer(
+  value: IFilePointer,
+  name: string,
+  entityName: string,
+): IValidationError | undefined {
+  if (!(value && value.name && value.size)) {
+    return { name, message: `${entityName} must be uploaded.` };
   }
   return undefined;
 }
