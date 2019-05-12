@@ -22,5 +22,5 @@ export async function apiFetch(
     headers: {
       Authorization: token && `Bearer ${token}`,
     },
-  }).catch(e => ({ data: { error: e.response.data }}));  
+  }).catch(e => ({ data: { error: e.response.data } }));
 }

@@ -17,7 +17,7 @@ const algorithmEditStyles = (theme: Theme) => {
     deleteButton: {
       marginRight: "auto",
       marginLeft: 0,
-    }
+    },
   });
 };
 

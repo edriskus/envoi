@@ -10,14 +10,37 @@ import {
   TableCell,
   TableHead,
   Typography,
+  LinearProgress,
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
-import { withRouter, RouteComponentProps } from "react-router";
+import { IApiError } from "../../types/api";
+import { IJobSummary } from "../../types/job";
+import { RouteComponentProps } from "react-router";
 
-type IJobListProps = RouteComponentProps;
+export interface IJobListStateProps {
+  loading: boolean;
+  error?: IApiError;
+  list?: IJobSummary[];
+}
+
+export interface IJobListDispatchProps {
+  requestListJob(): void;
+}
+
+type IJobListProps = 
+  IJobListStateProps &
+  IJobListDispatchProps &
+  RouteComponentProps;
 
 class JobList extends React.PureComponent<IJobListProps> {
+
+  componentDidMount() {
+    const { requestListJob } = this.props;
+    requestListJob();
+  }
+
   render() {
+    const { list = [], loading } = this.props;
     return (
       <Grid item={true} xs={12}>
         <Typography variant="h3" gutterBottom={true}>
@@ -27,17 +50,13 @@ class JobList extends React.PureComponent<IJobListProps> {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell align="right">Name</TableCell>
+                <TableCell>Title</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {[1, 2, 3, 4].map((row, i) => (
-                <TableRow key={i} onClick={this.openJob(i)}>
-                  <TableCell component="th" scope="row">
-                    {row}
-                  </TableCell>
-                  <TableCell align="right">{row}</TableCell>
+              {list.map((row, i) => (
+                <TableRow key={i} onClick={this.openJob(row._id)}>
+                  <TableCell>{row.title}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -49,20 +68,21 @@ class JobList extends React.PureComponent<IJobListProps> {
           >
             <Add />
           </Fab>
+          {loading && <LinearProgress />}
         </Paper>
       </Grid>
     );
   }
 
-  private openJob = (i: number) => () => {
+  private openJob = (id: string) => () => {
     const { history } = this.props;
-    history.push(`/jobs/${i}`);
+    history.push(`/jobs/${id}`);
   }
 
   private createJob = () => {
     const { history } = this.props;
-    history.push(`/jobs/create`);
+    history.push("/jobs/create");
   }
 }
 
-export default withRouter(JobList);
+export default JobList;

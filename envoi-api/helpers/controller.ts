@@ -6,6 +6,7 @@ import {
   AsyncRequestHandler
 } from "../types/controller";
 import { RequestHandler, Request, Response, NextFunction } from "express";
+import { IFilePointer } from "../types/algorithm";
 
 export function throwNotFound(entityName: string): any {  
   throw new NotFoundError(entityName);
@@ -51,4 +52,22 @@ export function failableController(
       }
     });
   };
+}
+
+/**
+ * Spreads file pointer for updating in mongoose
+ * @param file 
+ * @param name 
+ */
+export function spreadFilePointer(file: IFilePointer, name: string) {
+  const value: any = {
+    [`${name}.size`]: file.size,
+    [`${name}.name`]: file.name,
+  };
+  if (file.content) {
+    value[`${name}.content`] = file.content;
+  }
+  console.log("Spread", JSON.stringify(value));
+  
+  return value;
 }

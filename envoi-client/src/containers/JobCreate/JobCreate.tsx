@@ -15,16 +15,35 @@ import {
   WithStyles,
   CardContent,
   StepContent,
+  LinearProgress,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { IJobRequest } from "../../types/job";
+import { IApiError } from "../../types/api";
+import { IAlgorithmSummary } from "../../types/algorithm";
+
+export interface IJobCreateStateProps {
+  loading: boolean;
+  error?: IApiError;
+  algorithmsLoading: boolean;
+  algorithmList?: IAlgorithmSummary[];
+}
+
+export interface IJobCreateDispatchProps {
+  requestListAlgorithm(): void;
+}
 
 export interface IJobCreateState {
   activeStep: number;
   job: Partial<IJobRequest>;
 }
 
-type IJobCreateProps = WithStyles<typeof jobCreateStyles>;
+type IJobCreateStyleProps = WithStyles<typeof jobCreateStyles>;
+
+export type IJobCreateProps = 
+  IJobCreateStateProps &
+  IJobCreateDispatchProps &
+  IJobCreateStyleProps;
 
 class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
   state: IJobCreateState = {
@@ -32,13 +51,20 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
     job: {},
   };
 
+  componentDidMount() {
+    const { requestListAlgorithm } = this.props;
+    requestListAlgorithm();
+  }
+
   render() {
-    const { classes } = this.props;
+    const { classes, algorithmsLoading, algorithmList } = this.props;
     const { activeStep, job } = this.state;
+    const { algorithmId } = job;
     return (
       <>
         <Grid item={true} xs={12}>
           <Card>
+            {algorithmsLoading && <LinearProgress />}
             <CardContent>
               <Stepper 
                 orientation="vertical"
@@ -48,12 +74,17 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
                 <Step key={0}>
                   <StepLabel>Algorithm</StepLabel>
                   <StepContent>
-                    <AlgorithmChooser />
+                    <AlgorithmChooser 
+                      value={algorithmId}
+                      list={algorithmList} 
+                      onChange={this.handleAlgorithmChange}
+                    />
                     <div className={classes.buttonRightWrapper}>
                       <Button 
                         color="secondary"
                         variant="contained"
                         onClick={this.handleNext}
+                        disabled={!this.firstValid()}
                       >Next</Button>
                     </div>
                   </StepContent>
@@ -98,11 +129,26 @@ class JobCreate extends React.PureComponent<IJobCreateProps, IJobCreateState> {
     );
   }
 
+  private firstValid = () => {
+    const { job } = this.state;
+    const { algorithmId } = job;
+    return algorithmId != null && algorithmId.length > 0;
+  }
+
+  private handleAlgorithmChange = (algorithmId: string) => {
+    const { job } = this.state;
+    this.setState({
+      job: {
+        ...job,
+        algorithmId,
+      },
+    });
+  }
+
   private handleNext = () => {
     const { activeStep } = this.state;
     this.setState({
       activeStep: activeStep + 1,
-      job: { _id: "1ab" },
     });
   };
 

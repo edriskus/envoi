@@ -1,18 +1,19 @@
 import React from "react";
 import Landing from "../Landing/Landing";
-import JobList from "../JobList/JobList";
 import JobEdit from "../JobEdit/JobEdit";
 import Settings from "../Settings/Settings";
-import JobRunner from "../JobRunner/JobRunner";
 import JobCreate from "../JobCreate/JobCreate";
 import ConnectedJoin from "../Join/ConnectedJoin";
 import ConnectedLogin from "../Login/ConnectedLogin";
+import ConnectedJobList from "../JobList/ConnectedJobList";
 import ConnectedDashboard from "../Dashboard/ConnectedDashboard";
 import ConnectedAlgorithmEdit from "../AlgorithmEdit/ConnectedAlgorithmEdit";
 import ConnectedAlgorithmList from "../AlgorithmList/ConnectedAlgorithmList";
 
 import { IUserData } from "../../types/user";
 import { Route, Redirect, Switch } from "react-router";
+import ConnectedJobView from "../JobView/ConnectedJobView";
+import ConnectedJobCreate from "../JobCreate/ConnectedJobCreate";
 
 const Routes: React.FunctionComponent<IUserData> = (props: IUserData) => {
   const { loggedIn } = props;
@@ -22,14 +23,14 @@ const Routes: React.FunctionComponent<IUserData> = (props: IUserData) => {
         <Route key={0} path="/" exact={true} component={ConnectedDashboard} />,
         <Route key={1} path="/settings" exact={true} component={Settings} />,
 
-        <Route key={2} path="/jobs" exact={true} component={JobList} />,
+        <Route key={2} path="/jobs" exact={true} component={ConnectedJobList} />,
         <Route
           key={3}
           path="/jobs/create"
           exact={true}
-          component={JobCreate}
+          component={ConnectedJobCreate}
         />,
-        <Route key={4} path="/jobs/:id" exact={true} component={JobRunner} />,
+        <Route key={4} path="/jobs/:id" exact={true} component={ConnectedJobView} />,
         <Route
           key={5}
           path="/jobs/:id/edit"

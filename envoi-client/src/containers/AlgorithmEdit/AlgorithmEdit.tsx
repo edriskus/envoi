@@ -84,15 +84,19 @@ class AlgorithmEdit extends React.PureComponent<
   }
 
   componentDidUpdate(prevProps: IAlgorithmEditProps) {
-    const { algorithm, history } = this.props;
+    const { algorithm, history, match, loading, error } = this.props;
+    const { params } = match;
     const stateAlgorithm = this.state.algorithm;
     
-    if (prevProps.loading && !this.props.loading) {
+    if (prevProps.loading && !loading) {
       if (algorithm) {
+        if (algorithm._id && !params.id) {
+          history.push(`/algorithms/${algorithm._id}/edit`);
+        }
         this.setState({
           algorithm: { ...stateAlgorithm, ...algorithm },
         });
-      } else {
+      } else if (!error) {
         history.goBack();
       }
     }

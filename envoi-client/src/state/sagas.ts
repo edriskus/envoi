@@ -1,4 +1,11 @@
 import {
+  requestGetJob,
+  requestEditJob,
+  requestListJob,
+  requestCreateJob,
+  requestDeleteJob,
+} from "./job/jobSagas";
+import {
   requestGetAlgorithm,
   requestEditAlgorithm,
   requestListAlgorithm,
@@ -7,6 +14,7 @@ import {
 } from "./algorithm/algorithmSagas";
 import { requestLogin } from "./user/userSagas";
 import { IAppReduxState } from "../types/global";
+import { jobConstants } from "./job/jobConstants";
 import { userConstants } from "./user/userConstants";
 import { persistState } from "../helpers/localStorage";
 import { select, takeLatest, delay } from "redux-saga/effects";
@@ -45,6 +53,13 @@ function* rootSaga() {
     algorithmConstants.reqDeleteAlgorithm,
     requestDeleteAlgorithm,
   );
+
+  // Job sagas
+  yield takeLatest(jobConstants.reqGetJob, requestGetJob);
+  yield takeLatest(jobConstants.reqCreateJob, requestCreateJob);
+  yield takeLatest(jobConstants.reqEditJob, requestEditJob);
+  yield takeLatest(jobConstants.reqListJob, requestListJob);
+  yield takeLatest(jobConstants.reqDeleteJob, requestDeleteJob);
 }
 
 export { rootSaga };
