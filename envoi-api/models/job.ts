@@ -11,6 +11,7 @@ const jobSchema = new Schema({
   title: { type: String, required: true },
   owner: { type: String, required: true },
   description: { type: String, required: true },
+  algorithmId: { type: String, required: true },
   inputs: filePointer,
 });
 

@@ -18,6 +18,7 @@ export interface IJobSummary {
 
 export interface IJob {
   _id?: string;
+  gpu?: boolean;
   title: string;
   description: string;
   algorithmId: string;

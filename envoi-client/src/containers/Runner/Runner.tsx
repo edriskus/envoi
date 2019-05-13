@@ -1,0 +1,206 @@
+import React from "react";
+import runnerStyles from "./Runner.tss";
+
+import {
+  Typography,
+  IconButton,
+  withStyles,
+  WithStyles,
+  LinearProgress,
+} from "@material-ui/core";
+import { IBlock } from "../../types/runner";
+import { Engine } from "../../helpers/engine";
+import { GpuEngine } from "../../helpers/gpuEngine";
+import { PlayArrow, Pause } from "@material-ui/icons";
+import { WorkerEngine } from "../../helpers/workerEngine";
+import { RunnerUndefinedError } from "../../helpers/runner";
+
+export interface IRunnerOwnProps {
+  jobId: string;
+  gpu: boolean;
+}
+
+type IRunnerStyleProps = WithStyles<typeof runnerStyles>;
+
+export type IRunnerProps = IRunnerOwnProps & IRunnerStyleProps;
+
+export interface IRunnerState {
+  blocks: IBlock[];
+  ready: boolean;
+  running: boolean;
+  progress: number;
+}
+
+class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
+  private runner?: Engine;
+
+  state: IRunnerState = {
+    blocks: [],
+    ready: false,
+    running: false,
+    progress: 0,
+  };
+
+  componentDidMount() {
+    this.buildRunner();
+    setTimeout(() => this.start());
+  }
+
+  render() {
+    const { classes } = this.props;
+    const { ready, running, progress } = this.state;
+    const startActive = !running;
+    const pauseActive = running;
+    const status = running ? "Running" : ready ? "Ready" : "Idle";
+    const statistic = "-";
+    return (
+      <>
+        <Typography variant="body1">
+          <b>Helpers: </b>
+          {statistic}
+        </Typography>
+        <Typography variant="body1">
+          <b>Status: </b>
+          {status}
+        </Typography>
+        <div className={classes.progressWrapper}>
+          <LinearProgress variant="determinate" color="secondary" value={progress} />
+        </div>
+        <div className={classes.controlsWrapper}>
+          {startActive && (
+            <IconButton disabled={!ready} onClick={this.start}>
+              <PlayArrow />
+            </IconButton>
+          )}
+          {pauseActive && (
+            <IconButton disabled={!ready} onClick={this.pause}>
+              <Pause />
+            </IconButton>
+          )}
+        </div>
+      </>
+    );
+  }
+
+  start = () => {
+    console.log("Start");
+    
+    const { running, ready } = this.state;
+    if (!running && ready) {
+      const block = this.takeFirstBlock();
+      if (block) {
+        this.executeBlock(block);
+      } else {
+        this.fetchNextBlock(true);
+      }
+      this.setState({
+        running: true,
+      });
+    }
+  };
+
+  pause = () => {
+    // Todo
+    this.setState({
+      running: false,
+    });
+  };
+
+  private buildRunner = () => {
+    const { jobId, gpu } = this.props;
+    if (gpu) {
+      this.runner = new GpuEngine(jobId);
+    } else {
+      this.runner = new WorkerEngine(jobId);
+    }
+    this.runner.registerProgressListener(this.registerProgress);
+    this.setState({
+      ready: true,
+    });
+  };
+
+  private fetchNextBlock = async (executeImmediately?: boolean) => {
+    console.log("FetchNextBlock");
+    
+    try {
+      const { blocks } = this.state;
+      // TODO
+      const block = await Promise.resolve(null as any);
+      if (executeImmediately) {
+        this.executeBlock(block);
+      } else {
+        this.setState({
+          blocks: [...blocks, block],
+        });
+      }
+    } catch (e) {
+      console.warn("Block fetch failed");
+      this.setState({
+        running: false,
+        ready: false,
+      });
+    }
+  };
+
+  private executeBlock = async (block: IBlock) => {
+    console.log("ExecuteBlock");
+    
+    try {
+      this.setState({
+        running: true,
+        progress: 0,
+      });
+      if (!this.runner) {
+        return new RunnerUndefinedError();
+      }
+      const result = await this.runner.executeBlock(block);
+      this.setState({
+        running: false,
+        progress: 100,
+      });
+      return await this.submitBlock(result);
+    } catch (e) {
+      console.warn("Block execution failed");
+      this.setState({
+        running: false,
+        ready: false,
+      });
+    }
+  };
+
+  private registerProgress = (progress: number) => {
+    const { running, blocks } = this.state;
+    this.setState({ progress });
+    if (running && blocks.length < 1 && progress > 50) {
+      this.fetchNextBlock();
+    }
+  };
+
+  private submitBlock = async (block: IBlock) => {
+    console.log("SubmitBlock");
+    
+    const { blocks } = this.state;
+    // TODO
+    const response = await Promise.resolve(null);
+    const { running } = this.state;
+    if (running) {
+      if (blocks.length > 0) {
+        this.executeBlock(this.takeFirstBlock());
+      } else {
+        this.fetchNextBlock(true);
+      }
+    }
+    return response;
+  };
+
+  private takeFirstBlock = () => {
+    const { blocks } = this.state;
+    const block = blocks[0];
+    this.setState({
+      blocks: blocks.slice(1),
+    });
+    return block;
+  }
+}
+
+export default withStyles(runnerStyles)(Runner);

@@ -90,13 +90,12 @@ export async function createJob(req: Request, res: Response) {
 export async function updateJob(req: Request, res: Response) {
   const { _id } = req.user;
   const { id } = req.params;
-  const { title, description, inputs, algorithmId } = req.body;
+  const { title, description } = req.body;
 
   const errors = combineValidations(
+    
     validateRequired(title, "title", "Title"),
     validateRequired(description, "description", "Description"),
-    validateFilePointer(inputs, "inputs", "Inputs"),
-    validateRequired(algorithmId, "algorithmId", "AlgorithmId"),
   );
   if (errors) {
     throwValidationError(errors);
@@ -110,9 +109,7 @@ export async function updateJob(req: Request, res: Response) {
     {
       $set: {
         title, 
-        description, 
-        inputs, 
-        algorithmId,
+        description,
       }
     },
     {

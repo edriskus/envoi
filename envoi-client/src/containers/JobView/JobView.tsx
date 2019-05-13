@@ -1,6 +1,6 @@
 import React from "react";
+import Runner from "../Runner/Runner";
 import Info from "../../components/Info/Info";
-import Runner from "../../components/Runner/Runner";
 import DelayButton from "../../components/DelayButton/DelayButton";
 import NotFoundHandler from "../../components/NotFoundHandler/NotFoundHandler";
 
@@ -8,6 +8,7 @@ import { IJob } from "../../types/job";
 import { IApiError } from "../../types/api";
 import { RouteComponentProps } from "react-router";
 import { Grid, Card, CardContent, LinearProgress } from "@material-ui/core";
+import FakeText from "../../components/FakeText/FakeText";
 
 export interface IJobViewStateProps {
   job?: IJob;
@@ -36,6 +37,7 @@ class JobView extends React.PureComponent<IJobViewProps> {
 
   componentDidUpdate(prevProps: IJobViewProps) {
     const { job, history, loading, error } = this.props;
+   
     if (prevProps.loading && !loading) {
       if (!job && !error) {
         history.goBack();
@@ -59,7 +61,16 @@ class JobView extends React.PureComponent<IJobViewProps> {
         <Grid item={true} xs={12} sm={6}>
           <Card>
             <CardContent>
-              <Runner />
+              {(job != null) ? (
+                <Runner 
+                  gpu={!!job.gpu}
+                  jobId={job._id as string}
+                />
+              ) : (
+                <FakeText 
+                  lines={5}
+                />
+              )}
               <DelayButton
                 onClick={this.handleDelete}
                 triggeredLabel="Confirm"
