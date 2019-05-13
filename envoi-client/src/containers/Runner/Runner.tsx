@@ -9,6 +9,7 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import { IBlock } from "../../types/runner";
+import { apiFetch } from "../../helpers/api";
 import { Engine } from "../../helpers/engine";
 import { GpuEngine } from "../../helpers/gpuEngine";
 import { PlayArrow, Pause } from "@material-ui/icons";
@@ -16,8 +17,10 @@ import { WorkerEngine } from "../../helpers/workerEngine";
 import { RunnerUndefinedError } from "../../helpers/runner";
 
 export interface IRunnerOwnProps {
-  jobId: string;
   gpu: boolean;
+  jobId: string;
+  finished: boolean;
+  triggerUpdate?: () => void;
 }
 
 type IRunnerStyleProps = WithStyles<typeof runnerStyles>;
@@ -47,18 +50,16 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, finished } = this.props;
+    if (finished) {
+      return <Typography align="center">This job has finished</Typography>;
+    }
     const { ready, running, progress } = this.state;
     const startActive = !running;
     const pauseActive = running;
     const status = running ? "Running" : ready ? "Ready" : "Idle";
-    const statistic = "-";
     return (
       <>
-        <Typography variant="body1">
-          <b>Helpers: </b>
-          {statistic}
-        </Typography>
         <Typography variant="body1">
           <b>Status: </b>
           {status}
@@ -109,14 +110,18 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
   private buildRunner = () => {
     const { jobId, gpu } = this.props;
     if (gpu) {
-      this.runner = new GpuEngine(jobId);
+      this.runner = new GpuEngine();
     } else {
-      this.runner = new WorkerEngine(jobId);
+      this.runner = new WorkerEngine();
     }
     this.runner.registerProgressListener(this.registerProgress);
-    this.setState({
-      ready: true,
-    });
+    this.runner.setup(jobId).then(
+      () => {
+        this.setState({
+          ready: true,
+        });
+      },
+    );
   };
 
   private fetchNextBlock = async (executeImmediately?: boolean) => {
@@ -124,8 +129,8 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
     
     try {
       const { blocks } = this.state;
-      // TODO
-      const block = await Promise.resolve(null as any);
+      const { jobId } = this.props;
+      const block = (await apiFetch(`run/${jobId}/block`, null)).data;
       if (executeImmediately) {
         this.executeBlock(block);
       } else {
@@ -158,7 +163,7 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
         running: false,
         progress: 100,
       });
-      return await this.submitBlock(result);
+      return await this.submitBlock(block, result);
     } catch (e) {
       console.warn("Block execution failed");
       this.setState({
@@ -176,12 +181,18 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
     }
   };
 
-  private submitBlock = async (block: IBlock) => {
-    console.log("SubmitBlock");
-    
+  private submitBlock = async (block: IBlock, result: any) => {
+    const { jobId, triggerUpdate } = this.props; 
     const { blocks } = this.state;
-    // TODO
-    const response = await Promise.resolve(null);
+    const response = (await apiFetch(
+      `run/${jobId}/block/${block._id}`, 
+      null,
+      "POST",
+      result,
+    )).data;
+    if (typeof triggerUpdate === "function") {
+      triggerUpdate();
+    }
     const { running } = this.state;
     if (running) {
       if (blocks.length > 0) {

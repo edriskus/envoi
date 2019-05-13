@@ -3,6 +3,7 @@ import JobView from "./JobView";
 import {
   requestGetJobAction,
   requestDeleteJobAction,
+  clearJobAction,
 } from "../../state/job/jobActions";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
@@ -19,6 +20,7 @@ const mapStateToProps = (state: IAppReduxState): IJobViewStateProps => ({
 const mapDispatchToProps = (
   dispatch: Dispatch,
 ): IJobViewDispatchProps => ({
+  clearJob: () => dispatch(clearJobAction()),
   requestGetJob: (...params) =>
     dispatch(requestGetJobAction(...params)),
   requestDeleteJob: (...params) =>

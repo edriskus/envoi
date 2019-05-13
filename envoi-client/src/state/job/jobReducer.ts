@@ -74,6 +74,7 @@ export const jobReducer = (
         
         return withoutSingle;
       }
+    case jobConstants.reqGetJob:
     case jobConstants.reqEditJob:
     case jobConstants.reqListJob:
     case jobConstants.reqDeleteJob:
@@ -82,11 +83,12 @@ export const jobReducer = (
         loading: true,
       };
     case jobConstants.reqCreateJob:
-    case jobConstants.reqGetJob:
       return {
         ...withoutSingle,
         loading: true,
       };
+    case jobConstants.clearJob:
+      return withoutSingle;
     default:
       return state;
   }

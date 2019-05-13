@@ -7,8 +7,8 @@ import NotFoundHandler from "../../components/NotFoundHandler/NotFoundHandler";
 import { IJob } from "../../types/job";
 import { IApiError } from "../../types/api";
 import { RouteComponentProps } from "react-router";
-import { Grid, Card, CardContent, LinearProgress } from "@material-ui/core";
 import FakeText from "../../components/FakeText/FakeText";
+import { Grid, Card, CardContent, LinearProgress } from "@material-ui/core";
 
 export interface IJobViewStateProps {
   job?: IJob;
@@ -17,6 +17,7 @@ export interface IJobViewStateProps {
 }
 
 export interface IJobViewDispatchProps {
+  clearJob(): void;
   requestGetJob(id: string): void;
   requestDeleteJob(id: string): void;
 }
@@ -28,11 +29,9 @@ export type IJobViewProps =
 
 class JobView extends React.PureComponent<IJobViewProps> {
   componentDidMount() {
-    const { match, requestGetJob } = this.props;
-    const { params } = match;
-    if (params.id) {
-      requestGetJob(params.id);
-    }
+    const { clearJob } = this.props;
+    clearJob();
+    this.fetchJob();
   }
 
   componentDidUpdate(prevProps: IJobViewProps) {
@@ -65,6 +64,8 @@ class JobView extends React.PureComponent<IJobViewProps> {
                 <Runner 
                   gpu={!!job.gpu}
                   jobId={job._id as string}
+                  finished={!!job && !!job.finished}
+                  triggerUpdate={this.fetchJob}
                 />
               ) : (
                 <FakeText 
@@ -83,6 +84,14 @@ class JobView extends React.PureComponent<IJobViewProps> {
         </Grid>
       </>
     );
+  }
+
+  private fetchJob = () => {
+    const { match, requestGetJob } = this.props;
+    const { params } = match;
+    if (params.id) {
+      requestGetJob(params.id);
+    }
   }
 
   private handleDelete = () => {

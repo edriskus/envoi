@@ -3,7 +3,7 @@ import Block from "../models/block";
 import Algorithm from "../models/algorithm";
 
 import { Response, Request } from "express";
-import { throwNotFound, throwServerError } from "../helpers/controller";
+import { throwNotFound, throwServerError, throwBadRequest } from "../helpers/controller";
 import { runDispatcher, findSameResultIndex, isBlockValid, runReducer } from "../helpers/runner";
 
 /**
@@ -40,6 +40,11 @@ export async function getCode(req: Request, res: Response) {
  */
 export async function getBlock(req: Request, res: Response) {
   const { id } = req.params;
+  const job = await Job.findById(id, "finished")
+    .catch(() => throwNotFound("Job"));
+  if (job.finished) {
+    throwBadRequest("Finished job");
+  }
   const availableBlock = await Block.findOne({ 
     jobId: id, 
     running: false,
@@ -75,7 +80,7 @@ async function generateBlock(jobId: string) {
   const inputs = runDispatcher(
     algorithm.dispatcher.content, 
     blockCount,
-    job.inputs,
+    job.inputs.content,
   );
   if (!inputs) {
     throwNotFound("Block");
@@ -125,17 +130,18 @@ export async function submitBlock(req: Request, res: Response) {
 }
 
 async function processReducer(resultData: any, jobId: string) {
-  const job = await Job.findById(jobId, "algorithmId results")
+  const job = await Job.findById(jobId, "algorithmId results inputs")
     .catch(() => throwNotFound("Job"));
-  const algorithm = await Algorithm.findById(job.algorithmId, "reducer inputs")
+  const algorithm = await Algorithm.findById(job.algorithmId, "reducer")
     .catch(() => throwNotFound("Algorithm"));
-  const updatedResults = runReducer(
+  const { results, finished } = runReducer(
     algorithm.reducer.content, 
     job.results, 
     resultData, 
-    job.inputs,
+    job.inputs.content,
   );
-  job.results = updatedResults;
+  job.finished = !!finished;
+  job.results = results;
   return await job.save();
 }
 

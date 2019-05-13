@@ -26,6 +26,12 @@ export const clearErrorAction = (): IClearErrorAction<
   type: jobConstants.clearError,
 });
 
+export const clearJobAction = (): IClearErrorAction<
+  jobConstants.clearJob
+> => ({
+  type: jobConstants.clearJob,
+});
+
 export const requestCreateJobAction = (
   payload: Partial<IJobRequest>,
 ): IRequestCreateJobAction => ({

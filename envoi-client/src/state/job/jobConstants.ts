@@ -1,5 +1,6 @@
 export enum jobConstants {
   clearError = "job/clearError",
+  clearJob = "job/clear",
 
   reqCreateJob = "job/login/req",
   resCreateJob = "job/login/res",

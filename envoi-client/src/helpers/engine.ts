@@ -7,15 +7,9 @@ export abstract class Engine {
   block?: IBlock;
   protected progressListeners: EngineProgressListener[] = [];
 
-  constructor (
-    private codeUrl: string,
-  ) { 
-    this.setup();
-  }
-
-  abstract setup(): void;
   abstract stopCurrentBlock(): void;
-  abstract executeBlock(block: IBlock): Promise<IBlock>;
+  abstract setup(jobId: string): Promise<void>;
+  abstract executeBlock(block: IBlock): Promise<any>;
   
   registerProgressListener(fn: EngineProgressListener) {
     if (typeof fn === "function") {

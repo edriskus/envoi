@@ -2,8 +2,9 @@ import { Engine } from "./engine";
 import { IBlock } from "../types/runner";
 
 export class GpuEngine extends Engine {
-  setup() {
+  setup(jobId: string) {
     // TODO
+    return Promise.resolve();
   }
 
   stopCurrentBlock() {

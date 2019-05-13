@@ -37,6 +37,7 @@ export function failableController(
 ): RequestHandler {
   return function(req?: Request, res?: Response, next?: NextFunction) {
     return controller(req, res, next).catch((error: any) => {
+      console.error(error);
       if (
         error instanceof NotFoundError ||
         error instanceof BadRequestError ||

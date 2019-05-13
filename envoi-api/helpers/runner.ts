@@ -13,6 +13,8 @@ export function runDispatcher(code: string, blockNumber: number, inputs: any) {
       JSON.parse(inputs)
     );
   } catch (e) {
+    console.log(inputs);
+    
     console.error(e);
     throwServerError();
   }
@@ -27,13 +29,13 @@ export function runReducer(
   code: string,
   accumulator: any,
   value: any,
-  inputs: any
+  inputs: any,
 ) {
   try {
-    return new Function("accumulator", "value", "inputs", code)(
+    return new Function("accumulator", "value", "inputs", "finish", code)(
       accumulator,
       value,
-      inputs
+      inputs,
     );
   } catch (e) {
     console.error(e);

@@ -20,6 +20,7 @@ export interface IJob {
   _id?: string;
   gpu?: boolean;
   title: string;
+  finished?: boolean;
   description: string;
   algorithmId: string;
   inputs: IFilePointer;
@@ -90,4 +91,5 @@ export type JobAction =
   | IReceiveGetJobAction
   | IRequestDeleteJobAction
   | IReceiveDeleteJobAction
-  | IClearErrorAction<jobConstants.clearError>;
+  | IClearErrorAction<jobConstants.clearError>
+  | IClearErrorAction<jobConstants.clearJob>;

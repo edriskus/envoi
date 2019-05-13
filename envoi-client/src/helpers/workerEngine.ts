@@ -1,9 +1,22 @@
+import axios from "axios";
+
 import { Engine } from "./engine";
 import { IBlock } from "../types/runner";
 
 export class WorkerEngine extends Engine {
-  setup() {
-    // TODO
+
+  private exec?: (inputs: any) => any;
+  
+  setup(jobId: string) {
+    return axios({
+      method: "GET",
+      url: `${process.env.REACT_APP_API_URL}/run/${jobId}`,
+      responseType: "text",
+    }).then(
+      response => {
+        this.exec = new Function("inputs", response.data) as any;
+      },
+    );
   }
 
   stopCurrentBlock() {
@@ -11,10 +24,10 @@ export class WorkerEngine extends Engine {
   }
 
   executeBlock(block: IBlock) {
-    return new Promise<IBlock>((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       this.block = block;
-      // TODO
-      return resolve(block);
+      const results = this.exec && this.exec(block.inputs);
+      return resolve(results);
     });
   }
 }
