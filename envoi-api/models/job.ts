@@ -13,6 +13,7 @@ const jobSchema = new Schema({
   description: { type: String, required: true },
   algorithmId: { type: String, required: true },
   inputs: filePointer,
+  results: { type: Object },
 });
 
 export default mongoose.model('Job', jobSchema);

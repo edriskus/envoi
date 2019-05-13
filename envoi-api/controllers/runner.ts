@@ -4,7 +4,7 @@ import Algorithm from "../models/algorithm";
 
 import { Response, Request } from "express";
 import { throwNotFound, throwServerError } from "../helpers/controller";
-import { runDispatcher } from "../helpers/runner";
+import { runDispatcher, findSameResultIndex, isBlockValid } from "../helpers/runner";
 
 /**
  * 
@@ -42,10 +42,14 @@ export async function getBlock(req: Request, res: Response) {
   const { id } = req.params;
   const availableBlock = await Block.findOne({ 
     jobId: id, 
-    running: false 
-  }, "_id jobId algorithmId inputs");
+    running: false,
+    validated: false,
+  }, "_id jobId algorithmId inputs")
+    .catch(() => null);
   if (availableBlock) {
     res.json(availableBlock);
+    availableBlock.running = true;
+    availableBlock.save();
   } else {
     const {
       _id,
@@ -93,5 +97,26 @@ async function generateBlock(jobId: string) {
  * @param res 
  */
 export async function submitBlock(req: Request, res: Response) {
-
+  const { id, blockId } = req.params;
+  const result = req.body;
+  const block = await Block.findOne({ _id: blockId, jobId: id })
+    .catch(() => throwNotFound("Block"));
+  if (block.validated || !block.running) {
+    res.status(200).json({ status: 200, accepted: false })
+  }
+  const sameResultIndex = findSameResultIndex(result, block.results);
+  if (sameResultIndex !== -1) {
+    block.results[sameResultIndex].userIds.push(true);
+    if (isBlockValid(block.results)) {
+      block.validated = true;
+    }
+  } else {
+    block.results.push({
+      userIds: [true],
+      data: result,
+    });
+  }
+  block.running = false;
+  await block.save();
+  res.status(200).json({ status: 200, accepted: true });
 }
