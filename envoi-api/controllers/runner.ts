@@ -4,7 +4,7 @@ import Algorithm from "../models/algorithm";
 
 import { Response, Request } from "express";
 import { throwNotFound, throwServerError } from "../helpers/controller";
-import { runDispatcher, findSameResultIndex, isBlockValid } from "../helpers/runner";
+import { runDispatcher, findSameResultIndex, isBlockValid, runReducer } from "../helpers/runner";
 
 /**
  * 
@@ -67,15 +67,15 @@ export async function getBlock(req: Request, res: Response) {
 }
 
 async function generateBlock(jobId: string) {
-  const job = await Job.findById(jobId, "algorithmId")
+  const job = await Job.findById(jobId, "algorithmId inputs")
     .catch(() => throwNotFound("Job"));
-  const algorithm = await Algorithm.findById(job.algorithmId, "dispatcher inputs")
+  const algorithm = await Algorithm.findById(job.algorithmId, "dispatcher")
     .catch(() => throwNotFound("Algorithm"));
   const blockCount = await Block.count({ jobId });
   const inputs = runDispatcher(
     algorithm.dispatcher.content, 
     blockCount,
-    algorithm.inputs,
+    job.inputs,
   );
   if (!inputs) {
     throwNotFound("Block");
@@ -107,8 +107,11 @@ export async function submitBlock(req: Request, res: Response) {
   const sameResultIndex = findSameResultIndex(result, block.results);
   if (sameResultIndex !== -1) {
     block.results[sameResultIndex].userIds.push(true);
-    if (isBlockValid(block.results)) {
+    const { valid, resultData, userIds } = isBlockValid(block.results);
+    if (valid) {
       block.validated = true;
+      await processReducer(resultData, id);
+      await assignPoints(userIds);
     }
   } else {
     block.results.push({
@@ -119,4 +122,25 @@ export async function submitBlock(req: Request, res: Response) {
   block.running = false;
   await block.save();
   res.status(200).json({ status: 200, accepted: true });
+}
+
+async function processReducer(resultData: any, jobId: string) {
+  const job = await Job.findById(jobId, "algorithmId results")
+    .catch(() => throwNotFound("Job"));
+  const algorithm = await Algorithm.findById(job.algorithmId, "reducer inputs")
+    .catch(() => throwNotFound("Algorithm"));
+  const updatedResults = runReducer(
+    algorithm.reducer.content, 
+    job.results, 
+    resultData, 
+    job.inputs,
+  );
+  job.results = updatedResults;
+  return await job.save();
+}
+
+async function assignPoints(userIds: string[]) {
+  const first = userIds[1];
+  const validators = userIds.slice(1);
+  // TODO assign 1 to first and 1/n to each validator
 }
