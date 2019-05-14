@@ -5,13 +5,27 @@ import {
   IRequestRegisterAction,
   IReceiveRegisterAction,
   IReceiveLoginAction,
+  IRequestGetCreditsAction,
+  IReceiveGetCreditsAction,
+  UserType,
 } from "../../types/user";
-import { IClearErrorAction, IApiError } from "../../types/api";
+import { IClearErrorAction, IApiError, IApiErrorResponse } from "../../types/api";
 
 export const clearErrorAction = 
   (): IClearErrorAction<userConstants.clearError> => ({
     type: userConstants.clearError,
   });
+
+export const requestGetCreditsAction = (): IRequestGetCreditsAction => ({
+  type: userConstants.reqGetCredits,
+});
+
+export const receiveGetCreditsAction = (payload: { 
+    credits: number,
+  } | IApiErrorResponse): IReceiveGetCreditsAction => ({
+  type: userConstants.resGetCredits,
+  payload,
+});
 
 export const removeTokenAction = (): IRemoveTokenAction => ({
   type: userConstants.removeToken,
@@ -32,6 +46,7 @@ export const receiveLoginAction = (
     email: string,
     firstName: string,
     lastName?: string,
+    type: UserType,
   } | {
     error: IApiError,
   },
@@ -59,7 +74,9 @@ export const requestRegisterAction = (
   },
 });
 
-export const receiveRegisterAction = (): IReceiveRegisterAction => ({
+export const receiveRegisterAction = (payload: {
+    registered: boolean,
+  } | IApiErrorResponse): IReceiveRegisterAction => ({
   type: userConstants.resRegister,
-  payload: {},
+  payload,
 });

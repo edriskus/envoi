@@ -14,27 +14,29 @@ export const userReducer = (
 ): IUserReduxState => {
   switch (action.type) {
     case userConstants.clearError:
-      const { error, ...rest } = state;
+      const { error, loading, registered, ...rest } = state;
       return rest;
     case userConstants.removeToken:
       return {};
-    case userConstants.reqLogin:
-      return {
-        ...state,
-        loading: true,
-      };
     case userConstants.resLogin:
       return {
         ...(action as IReceiveLoginAction).payload,
       };
+    case userConstants.resRegister:
+      return {
+        ...(action as IReceiveRegisterAction).payload,
+      };
+    case userConstants.resGetCredits:
+      return {
+        ...state,
+        ...action.payload,
+      };
+    case userConstants.reqLogin:
+    case userConstants.reqGetCredits:
     case userConstants.reqRegister:
       return {
         ...state,
         loading: true,
-      };
-    case userConstants.resRegister:
-      return {
-        ...(action as IReceiveRegisterAction).payload,
       };
     default:
       return state;

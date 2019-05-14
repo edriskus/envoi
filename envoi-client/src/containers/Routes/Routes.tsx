@@ -1,27 +1,24 @@
 import React from "react";
 import Landing from "../Landing/Landing";
 import JobEdit from "../JobEdit/JobEdit";
-import Settings from "../Settings/Settings";
-import JobCreate from "../JobCreate/JobCreate";
 import ConnectedJoin from "../Join/ConnectedJoin";
 import ConnectedLogin from "../Login/ConnectedLogin";
 import ConnectedJobList from "../JobList/ConnectedJobList";
-import ConnectedDashboard from "../Dashboard/ConnectedDashboard";
+import ConnectedJobView from "../JobView/ConnectedJobView";
+import ConnectedSettings from "../Settings/ConnectedSettings";
+import ConnectedJobCreate from "../JobCreate/ConnectedJobCreate";
 import ConnectedAlgorithmEdit from "../AlgorithmEdit/ConnectedAlgorithmEdit";
 import ConnectedAlgorithmList from "../AlgorithmList/ConnectedAlgorithmList";
 
 import { IUserData } from "../../types/user";
 import { Route, Redirect, Switch } from "react-router";
-import ConnectedJobView from "../JobView/ConnectedJobView";
-import ConnectedJobCreate from "../JobCreate/ConnectedJobCreate";
 
 const Routes: React.FunctionComponent<IUserData> = (props: IUserData) => {
   const { loggedIn } = props;
   return (
     <Switch>
       {loggedIn && [
-        <Route key={0} path="/" exact={true} component={ConnectedDashboard} />,
-        <Route key={1} path="/settings" exact={true} component={Settings} />,
+        <Route key={1} path="/settings" exact={true} component={ConnectedSettings} />,
 
         <Route key={2} path="/jobs" exact={true} component={ConnectedJobList} />,
         <Route
@@ -56,6 +53,7 @@ const Routes: React.FunctionComponent<IUserData> = (props: IUserData) => {
           exact={true}
           component={ConnectedAlgorithmEdit}
         />,
+        <Redirect key={9} to="/jobs" />,
       ]}
 
       {!loggedIn && [

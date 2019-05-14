@@ -15,11 +15,13 @@ import {
 import { IUserData } from "../../types/user";
 import { Link, NavLink } from "react-router-dom";
 import { BubbleChart, HdrStrong } from "@material-ui/icons";
+import { isCreator } from "../../helpers/user";
 
 type IHeaderStypeProps = WithStyles<typeof headerStyles>;
 
 export interface IHeaderDispatchProps {
   logOut(): void;
+  getCredits(): void;
 }
 
 type IHeaderProps =
@@ -36,11 +38,19 @@ class Header extends React.PureComponent<IHeaderProps, IHeaderState> {
     menuAnchor: null,
   };
 
+  componentDidMount() {
+    const { loggedIn, getCredits } = this.props;
+    if (loggedIn) {
+      getCredits();
+    }
+  }
+
   render() {
     const { 
       classes, 
       loggedIn, 
-      user: { firstName }, 
+      credits,
+      user: { type } = {} as any,
     } = this.props;
     const { menuAnchor } = this.state;
     return (
@@ -59,13 +69,16 @@ class Header extends React.PureComponent<IHeaderProps, IHeaderState> {
             <NavLink to="/jobs" activeClassName={classes.linkActive}>
               <Button color="inherit">Jobs</Button>
             </NavLink>
-            <NavLink to="/algorithms" activeClassName={classes.linkActive}>
+            {isCreator(type) && <NavLink to="/algorithms" activeClassName={classes.linkActive}>
               <Button color="inherit">Algorithms</Button>
-            </NavLink>
+            </NavLink>}
             <Chip
               label={(<>
                 <HdrStrong />
-                <b>&nbsp;{27}</b>
+                <b>&nbsp;{credits == null ? 
+                  "-" : 
+                  Math.floor(credits as any)
+                }</b>
               </>)}
               className={classes.chip}
               onClick={this.openMenu}

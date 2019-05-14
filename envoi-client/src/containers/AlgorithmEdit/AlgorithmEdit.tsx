@@ -174,21 +174,28 @@ class AlgorithmEdit extends React.PureComponent<
                     <FileRead
                       label="Block dispatcher"
                       error={formatError("dispatcher", error)}
-                      description="Dispatcher generates job blocks for distribution"
+                      description={`Dispatcher generates job blocks for distribution.
+                        Uses index (block number) and inputs (job inputs) as context variables.
+                        Returns inputs data for a single block of a given index.`}
                       value={dispatcher}
                       onChange={this.handleDispatcherChange}
                     />
                     <FileRead
                       label="Client runner"
                       error={formatError("runner", error)}
-                      description="Cient runner contains computational code"
+                      description={`Cient runner contains computational code.
+                        Uses inputs (job inputs) and 
+                        reportProgress (funtion accepting 0 - 100) as context variables.
+                        Returns results data for computed block.`}
                       value={runner}
                       onChange={this.handleRunnerChange}
                     />
                     <FileRead
                       label="Block reducer"
                       error={formatError("reducer", error)}
-                      description="Reducer is run on each block before saving it to DB"
+                      description={`Reducer is run on each block before saving it to DB.
+                        Uses accumulator (job results state), value (block result data), inputs as context variables.
+                        Returns object { results (new state), finished (boolean) }`}
                       value={reducer}
                       onChange={this.handleReducerChange}
                     />

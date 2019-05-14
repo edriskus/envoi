@@ -52,6 +52,7 @@ export async function doLogin(req: Request, res: Response) {
         token,
         username: (user as any).username,
         email: (user as any).email,
+        type: (user as any).type,
         firstName: (user as any).firstName,
         lastName: (user as any).lastName
       });
@@ -93,6 +94,22 @@ export async function doRegister(
   );
   if (errors) {
     throwValidationError(errors);
+  }
+
+  const existingUserCount = await User.count({ username });
+  if (existingUserCount > 0) {
+    throwValidationError([{
+      name: "username",
+      message: "User with this username already exists",
+    }]);
+  }
+
+  const existingEmailCount = await User.count({ email });
+  if (existingEmailCount > 0) {
+    throwValidationError([{
+      name: "email",
+      message: "User with this email already exists",
+    }]);
   }
 
   const user = await User.create({

@@ -20,6 +20,7 @@ export interface IRunnerOwnProps {
   gpu: boolean;
   jobId: string;
   finished: boolean;
+  autoStart?: boolean;
   triggerUpdate?: () => void;
 }
 
@@ -46,7 +47,10 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
 
   componentDidMount() {
     this.buildRunner();
-    setTimeout(() => this.start());
+    const { autoStart } = this.props;
+    if (autoStart) {
+      setTimeout(() => this.start());
+    }
   }
 
   render() {
@@ -83,9 +87,7 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
     );
   }
 
-  start = () => {
-    console.log("Start");
-    
+  start = () => {    
     const { running, ready } = this.state;
     if (!running && ready) {
       const block = this.takeFirstBlock();
@@ -124,9 +126,7 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
     );
   };
 
-  private fetchNextBlock = async (executeImmediately?: boolean) => {
-    console.log("FetchNextBlock");
-    
+  private fetchNextBlock = async (executeImmediately?: boolean) => {    
     try {
       const { blocks } = this.state;
       const { jobId } = this.props;
@@ -147,9 +147,7 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
     }
   };
 
-  private executeBlock = async (block: IBlock) => {
-    console.log("ExecuteBlock");
-    
+  private executeBlock = async (block: IBlock) => {    
     try {
       this.setState({
         running: true,

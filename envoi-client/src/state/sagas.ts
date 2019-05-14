@@ -12,7 +12,11 @@ import {
   requestCreateAlgorithm,
   requestDeleteAlgorithm,
 } from "./algorithm/algorithmSagas";
-import { requestLogin } from "./user/userSagas";
+import {
+  requestLogin,
+  requestGetCredits,
+  requestRegister,
+} from "./user/userSagas";
 import { IAppReduxState } from "../types/global";
 import { jobConstants } from "./job/jobConstants";
 import { userConstants } from "./user/userConstants";
@@ -40,6 +44,8 @@ function* rootSaga() {
 
   // User sagas
   yield takeLatest(userConstants.reqLogin, requestLogin);
+  yield takeLatest(userConstants.reqRegister, requestRegister);
+  yield takeLatest(userConstants.reqGetCredits, requestGetCredits);
 
   // Algorithm sagas
   yield takeLatest(algorithmConstants.reqGetAlgorithm, requestGetAlgorithm);

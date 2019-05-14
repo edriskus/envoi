@@ -44,6 +44,11 @@ class Login extends React.PureComponent<ILoginProps, ILoginState> {
     password: "",
   };
 
+  componentDidMount() {
+    const { clearError } = this.props;
+    clearError();
+  }
+
   render() {
     const { loading, error, classes } = this.props;
     const { username, password } = this.state;

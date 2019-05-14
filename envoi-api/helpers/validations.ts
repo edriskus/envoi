@@ -62,8 +62,8 @@ export function validateTrue(
   value: boolean,
   name: string,
   entityName: string
-): IValidationError | undefined {
-  if (value === true) {
+): IValidationError | undefined {  
+  if (value !== true) {
     return { name, message: `${entityName} must be selected.` };
   }
   return undefined;

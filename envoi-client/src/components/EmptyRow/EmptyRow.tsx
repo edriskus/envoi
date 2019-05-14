@@ -16,9 +16,7 @@ type IEmptyRowProps =
   IEmptyRowOwnProps;
 
 const EmptyRow: React.FunctionComponent<IEmptyRowProps> = props => {
-  const { name, loading, list, classes } = props;
-  console.log(list);
-  
+  const { name, loading, list, classes } = props;  
   const isEmpty = !list || !Array.isArray(list) || (list.length < 1);
   if (!isEmpty) {
     return null;

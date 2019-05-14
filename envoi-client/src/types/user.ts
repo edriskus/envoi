@@ -1,26 +1,52 @@
 import { userConstants } from "../state/user/userConstants";
-import { ILoadableReduxState, IClearErrorAction, IApiError } from "./api";
+import {
+  ILoadableReduxState,
+  IClearErrorAction,
+  IApiError,
+  IApiErrorResponse,
+} from "./api";
+
+export type UserType = "CONSUMER" | "CREATOR";
 
 export interface IUserReduxState extends ILoadableReduxState {
+  credits?: number;
+  registered?: boolean;
   token?: string;
   username?: string;
   email?: string;
   firstName?: string;
   lastName?: string;
+  type?: UserType;
+  error?: IApiError;
 }
 
 export interface IUserData {
   loggedIn: boolean;
+  credits?: number;
   user: {
     username?: string;
     email?: string;
     firstName?: string;
     lastName?: string;
+    type?: UserType;
   };
 }
 
 export interface IRemoveTokenAction {
   type: userConstants.removeToken;
+}
+
+export interface IRequestGetCreditsAction {
+  type: userConstants.reqGetCredits;
+}
+
+export interface IReceiveGetCreditsAction {
+  type: userConstants.resGetCredits;
+  payload:
+    | {
+        credits: number;
+      }
+    | IApiErrorResponse;
 }
 
 export interface IRequestLoginAction {
@@ -40,10 +66,9 @@ export interface IReceiveLoginAction {
         email: string;
         firstName: string;
         lastName?: string;
+        type: UserType;
       }
-    | {
-        error: IApiError;
-      };
+    | IApiErrorResponse;
 }
 
 export interface IRequestRegisterAction {
@@ -60,10 +85,16 @@ export interface IRequestRegisterAction {
 
 export interface IReceiveRegisterAction {
   type: userConstants.resRegister;
-  payload: {};
+  payload:
+    | {
+        registered: boolean;
+      }
+    | IApiErrorResponse;
 }
 
 export type UserAction =
+  | IRequestGetCreditsAction
+  | IReceiveGetCreditsAction
   | IRemoveTokenAction
   | IRequestLoginAction
   | IReceiveLoginAction

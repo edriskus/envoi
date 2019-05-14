@@ -12,9 +12,7 @@ export function runDispatcher(code: string, blockNumber: number, inputs: any) {
       blockNumber,
       JSON.parse(inputs)
     );
-  } catch (e) {
-    console.log(inputs);
-    
+  } catch (e) {    
     console.error(e);
     throwServerError();
   }
