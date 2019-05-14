@@ -14,10 +14,13 @@ import {
 
 export function* requestLogin(action: IRequestLoginAction) {
   const response = yield apiFetch("auth/login", null, "POST", action.payload);
-  yield all([
+  const actions: any = [
     put(receiveLoginAction(response.data)),
-    put(requestGetCreditsAction()),
-  ]);
+  ];
+  if (response.data.token) {
+    actions.push(put(requestGetCreditsAction()));
+  }
+  yield all(actions);
 }
 
 export function* requestRegister(action: IRequestRegisterAction) {

@@ -12,7 +12,8 @@ const UserSchema = new Schema<IUser>({
   email: { type: String, required: true },
   type: { type: String, required: true, default: "CONSUMER" },
   firstName: { type: String, required: true },
-  lastName: { type: String }
+  lastName: { type: String },
+  activationToken: { type: String },
 });
 
 UserSchema.pre("save", function(next) {

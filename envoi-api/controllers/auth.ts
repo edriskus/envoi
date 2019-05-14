@@ -1,4 +1,6 @@
 import * as jwt from "jsonwebtoken";
+import * as uuidv4 from "uuid/v4";
+import * as mailgun from "mailgun-js"
 
 import User from "../models/user";
 
@@ -12,7 +14,8 @@ import {
 } from "../helpers/validations";
 import { throwLoginError } from "../helpers/auth";
 import { Request, Response, NextFunction } from "express";
-import { throwServerError, failableController } from "../helpers/controller";
+import { throwServerError, failableController, throwNotFound } from "../helpers/controller";
+import { BadRequestError } from "../types/controller";
 
 /**
  *
@@ -34,6 +37,11 @@ export async function doLogin(req: Request, res: Response) {
   const user = await User.findOne({ username })
     .exec()
     .catch(throwLoginError);
+  if (user && (user as any).activationToken) {
+    const error = new BadRequestError("User");
+    error.message = "User is not activated. Please check your email.";
+    throw error;
+  }
   if (user) {
     const isMatch = await (user as any).comparePassword(password);
     if (isMatch) {
@@ -112,16 +120,54 @@ export async function doRegister(
     }]);
   }
 
+  const activationToken = uuidv4();
+
   const user = await User.create({
     username,
     password,
     firstName,
     lastName,
-    email
+    email,
+    activationToken,
   });
   if (user) {
-    failableController(doLogin)(req, res, next);
+    var data = {
+      from: 'Envoi.ts <noreply@envoi.riskus.lt>',
+      to: email,
+      subject: 'Envoi.ts Account Activation',
+      text: `Envoi.ts activation link: https://api.envoi.riskus.lt/auth/activate/${activationToken}`
+    };
+    const mgInstance = mailgun({
+      apiKey: process.env.MAILGUN_API_KEY, 
+      domain: "riskus.lt",
+    });
+    mgInstance.messages().send(data, function(error) {
+      if (error) {
+        console.log(error);
+        res.status(500).json({
+          status: 500,
+          message: "Error sending email"
+        });
+      } else {
+        res.json({ status: 200 });
+      }
+    });
   } else {
     throwServerError();
   }
+
 }
+
+export async function doActivate(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { token } = req.params;
+  const user = await User.findOne({ activationToken: token }, "activationToken").catch(() =>
+    throwNotFound("User")
+  );
+  user.activationToken = null;
+  await user.save();
+  return res.redirect('https://envoi.riskus.lt/login')
+};
