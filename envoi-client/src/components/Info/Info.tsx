@@ -1,23 +1,38 @@
 import React from "react";
 
 import { Typography } from "@material-ui/core";
+import FakeText from "../FakeText/FakeText";
+import FileDownload from "../FileDownload/FileDownload";
 
-const Info: React.FunctionComponent = () => (
-  <>
-    <Typography variant="h3">Title</Typography>
-    <Typography variant="caption" gutterBottom={true}>
-      21 April, 2019
-    </Typography>
-    <Typography variant="body1">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, 
-      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-      nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in 
-      reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-      Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia 
-      deserunt mollit anim id est laborum.
-    </Typography>
-  </>
-)
+export interface IInfoProps {
+  entity?: {
+    title: string;
+    description: string;
+    finished?: boolean;
+    results?: boolean;
+  } | null;
+}
+
+const Info: React.FunctionComponent<IInfoProps> = props => {
+  const { entity } = props;
+  const { title, description, finished, results } = entity || {} as any;
+  return (
+    <>
+      <Typography variant="h3">{title || <FakeText variant="heading" />}</Typography>
+      <Typography variant="caption" gutterBottom={true}>
+        21 April, 2019
+      </Typography>
+      <Typography variant="body1" gutterBottom={true}>
+        {description  || <FakeText lines={5} />}
+      </Typography>
+      {finished && <FileDownload
+        content={results && JSON.stringify(results)}
+        fileName="results.json"
+        label="Results"
+        description="Download results from finished job run"
+      />}
+    </>
+  );
+};
 
 export default Info;

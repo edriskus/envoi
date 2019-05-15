@@ -1,47 +1,94 @@
 import React from "react";
 
-import { 
-  Grid, 
-  Paper, 
-  Table, 
-  TableRow, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  Typography, 
+import {
+  Fab,
+  Grid,
+  Paper,
+  Table,
+  TableRow,
+  TableBody,
+  TableCell,
+  TableHead,
+  Typography,
+  LinearProgress,
 } from "@material-ui/core";
-import { withRouter, RouterProps } from "react-router";
+import { Add } from "@material-ui/icons";
+import { IApiError } from "../../types/api";
+import { IJobSummary } from "../../types/job";
+import { RouteComponentProps } from "react-router";
+import EmptyRow from "../../components/EmptyRow/EmptyRow";
 
-type IJobListProps = RouterProps;
+export interface IJobListStateProps {
+  loading: boolean;
+  error?: IApiError;
+  list?: IJobSummary[];
+}
 
-const JobList: React.FunctionComponent<RouterProps> = 
-  (props: IJobListProps) => {
-    const { history } = props;
+export interface IJobListDispatchProps {
+  requestListJob(): void;
+}
+
+type IJobListProps = 
+  IJobListStateProps &
+  IJobListDispatchProps &
+  RouteComponentProps;
+
+class JobList extends React.PureComponent<IJobListProps> {
+
+  componentDidMount() {
+    const { requestListJob } = this.props;
+    requestListJob();
+  }
+
+  render() {
+    const { list = [], loading } = this.props;
     return (
       <Grid item={true} xs={12}>
-        <Typography variant="h3" gutterBottom={true}>Jobs</Typography>
+        <Typography variant="h3" gutterBottom={true}>
+          Jobs
+        </Typography>
         <Paper>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell align="right">Name</TableCell>
+                <TableCell>Title</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {[1,2,3,4].map((row, i) => (
-                <TableRow key={i} onClick={() => history.push(`/jobs/${i}`)}>
-                  <TableCell component="th" scope="row">
-                    {row}
-                  </TableCell>
-                  <TableCell align="right">{row}</TableCell>
+              {list.map((row, i) => (
+                <TableRow key={i} onClick={this.openJob(row._id)}>
+                  <TableCell>{row.title}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+          <EmptyRow
+            name="jobs"
+            list={list}
+            loading={loading} 
+          />
+          <Fab
+            color="primary"
+            aria-label="New Job"
+            onClick={this.createJob}
+          >
+            <Add />
+          </Fab>
+          {loading && <LinearProgress />}
         </Paper>
       </Grid>
     );
-  };
+  }
 
-export default withRouter(JobList);
+  private openJob = (id: string) => () => {
+    const { history } = this.props;
+    history.push(`/jobs/${id}`);
+  }
+
+  private createJob = () => {
+    const { history } = this.props;
+    history.push("/jobs/create");
+  }
+}
+
+export default JobList;

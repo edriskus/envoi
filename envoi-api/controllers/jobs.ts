@@ -3,7 +3,8 @@ import Job from "../models/job";
 import {
   validateRequired,
   combineValidations,
-  throwValidationError
+  throwValidationError,
+  validateFilePointer
 } from "../helpers/validations";
 import { Response, Request } from "express";
 import { throwNotFound } from "../helpers/controller";
@@ -19,7 +20,7 @@ export async function getJob(req: Request, res: Response) {
     {
       _id: id
     },
-    "-owner"
+    "-owner -inputs.content"
   ).catch(() => throwNotFound("Job"));
   if (job) {
     res.json(job);
@@ -35,7 +36,7 @@ export async function getJob(req: Request, res: Response) {
  */
 export async function getJobs(req: Request, res: Response) {
   const { _id } = req.user;
-  const jobs = await Job.find({ owner: _id }, "-owner").catch(() =>
+  const jobs = await Job.find({ owner: _id }, "-owner -inputs.content").catch(() =>
     throwNotFound("Jobs")
   );
   res.json(jobs);
@@ -48,18 +49,37 @@ export async function getJobs(req: Request, res: Response) {
  */
 export async function createJob(req: Request, res: Response) {
   const { _id } = req.user;
-  const { title } = req.body;
+  const { title, description, inputs, algorithmId } = req.body;
 
-  const errors = combineValidations(validateRequired(title, "Title"));
+  const errors = combineValidations(
+    validateRequired(title, "title", "Title"),
+    validateRequired(description, "description", "Description"),
+    validateFilePointer(inputs, "inputs", "Inputs"),
+    validateRequired(algorithmId, "algorithmId", "AlgorithmId"),
+  );
   if (errors) {
     throwValidationError(errors);
   }
 
-  const job = await Job.create({
+  const saveResult = await Job.create({
     owner: _id,
-    title
+    title, 
+    description, 
+    inputs, 
+    algorithmId,
   });
-  res.status(201).json(job);
+  
+  const job = await Job.findOne(
+    {
+      _id: saveResult._id
+    },
+    "-owner -inputs.content"
+  ).catch(() => throwNotFound("Job"));
+  if (job) {
+    res.status(201).json(job);
+  } else {
+    throwNotFound("Job");
+  }
 }
 
 /**
@@ -70,9 +90,13 @@ export async function createJob(req: Request, res: Response) {
 export async function updateJob(req: Request, res: Response) {
   const { _id } = req.user;
   const { id } = req.params;
-  const { title } = req.body;
+  const { title, description } = req.body;
 
-  const errors = combineValidations(validateRequired(title, "Title"));
+  const errors = combineValidations(
+    
+    validateRequired(title, "title", "Title"),
+    validateRequired(description, "description", "Description"),
+  );
   if (errors) {
     throwValidationError(errors);
   }
@@ -84,11 +108,13 @@ export async function updateJob(req: Request, res: Response) {
     },
     {
       $set: {
-        title
+        title, 
+        description,
       }
     },
     {
-      new: true
+      new: true,
+      projection: "-inputs.content",
     }
   ).catch(() => throwNotFound("Job"));
   res.json(job);

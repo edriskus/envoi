@@ -1,40 +1,124 @@
 import React from "react";
 
-import { 
-  Grid, 
-  Paper, 
-  Table, 
-  TableRow, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  Typography, 
+import {
+  Fab,
+  Grid,
+  Paper,
+  Table,
+  TableRow,
+  TableBody,
+  TableCell,
+  TableHead,
+  Typography,
+  LinearProgress,
+  Hidden,
 } from "@material-ui/core";
+import { Add, Done } from "@material-ui/icons";
+import { IApiError } from "../../types/api";
+import { RouteComponentProps } from "react-router";
+import { IAlgorithmSummary } from "../../types/algorithm";
+import FileInfo from "../../components/FileInfo/FileInfo";
+import EmptyRow from "../../components/EmptyRow/EmptyRow";
 
-const AlgorithmList: React.FunctionComponent = () => (
-  <Grid item={true} xs={12}>
-    <Typography variant="h3" gutterBottom={true}>Algorithms</Typography>
-    <Paper>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell align="right">Name</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {[1,2,3,4].map((row, i) => (
-            <TableRow key={i}>
-              <TableCell component="th" scope="row">
-                {row}
-              </TableCell>
-              <TableCell align="right">{row}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Paper>
-  </Grid>
-)
+export interface IAlgorithmListStateProps {
+  loading: boolean;
+  error?: IApiError;
+  list?: IAlgorithmSummary[];
+}
+
+export interface IAlgorithmListDispatchProps {
+  requestListAlgorithm(): void;
+}
+
+type IAlgorithmListProps = 
+  IAlgorithmListStateProps &
+  IAlgorithmListDispatchProps &
+  RouteComponentProps;
+
+class AlgorithmList extends React.PureComponent<IAlgorithmListProps> {
+
+  componentDidMount() {
+    const { requestListAlgorithm } = this.props;
+    requestListAlgorithm();
+  }
+
+  render() {
+    const { list = [], loading } = this.props;
+    return (
+      <Grid item={true} xs={12}>
+        <Typography variant="h3" gutterBottom={true}>
+          Algorithms
+        </Typography>
+        <Paper>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Title</TableCell>
+                <TableCell>Uses GPU</TableCell>
+                <Hidden smDown={true}>
+                  <TableCell>Dispatcher</TableCell>
+                </Hidden>
+                <Hidden xsDown={true}>
+                  <TableCell>Runner</TableCell>
+                </Hidden>
+                <Hidden smDown={true}>
+                  <TableCell>Reducer</TableCell>
+                </Hidden>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {list.map((row, i) => (
+                <TableRow key={i} onClick={this.openAlgorithm(row._id)}>
+                  <TableCell>{row.title}</TableCell>
+                  <TableCell>{row.gpu && (
+                    <Done />
+                  )}</TableCell>
+                  <Hidden smDown={true}>
+                    <TableCell>
+                      <FileInfo filePointer={row.dispatcher} />
+                    </TableCell>
+                  </Hidden>
+                  <Hidden xsDown={true}>
+                    <TableCell>
+                      <FileInfo filePointer={row.runner} />
+                    </TableCell>
+                  </Hidden>
+                  <Hidden smDown={true}>
+                    <TableCell>
+                      <FileInfo filePointer={row.reducer} />
+                    </TableCell>
+                  </Hidden>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <EmptyRow
+            list={list}
+            name="algorithm"
+            loading={loading} 
+          />
+          <Fab
+            color="primary"
+            aria-label="New Algorithm"
+            onClick={this.createAlgorithm}
+          >
+            <Add />
+          </Fab>
+          {loading && <LinearProgress />}
+        </Paper>
+      </Grid>
+    );
+  }
+
+  private openAlgorithm = (id: string) => () => {
+    const { history } = this.props;
+    history.push(`/algorithms/${id}/edit`);
+  }
+
+  private createAlgorithm = () => {
+    const { history } = this.props;
+    history.push("/algorithms/create");
+  }
+}
 
 export default AlgorithmList;

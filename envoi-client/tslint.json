@@ -21,9 +21,7 @@
     "label-position": true,
     "max-line-length": [true, 120],
     "member-access": [true, "no-public"],
-    "member-ordering": [true, {
-      "order": ["public-static-field", "public-instance-field", "private-static-field", "private-instance-field", "public-constructor", "private-constructor", "public-instance-method", "protected-instance-method", "private-instance-method"]
-    }],
+    "member-ordering": [false],
     "no-any": false,
     "no-arg": true,
     "no-bitwise": true,

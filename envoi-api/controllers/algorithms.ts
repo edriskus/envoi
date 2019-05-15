@@ -3,10 +3,11 @@ import Algorithm from "../models/algorithm";
 import {
   validateRequired,
   combineValidations,
-  throwValidationError
+  throwValidationError,
+  validateFilePointer
 } from "../helpers/validations";
 import { Response, Request } from "express";
-import { throwNotFound } from "../helpers/controller";
+import { throwNotFound, spreadFilePointer } from "../helpers/controller";
 
 /**
  * Get Algorithm by id
@@ -19,7 +20,7 @@ export async function getAlgorithm(req: Request, res: Response) {
     {
       _id: id
     },
-    "-owner"
+    "-owner -dispatcher.content -reducer.content -runner.content"
   ).catch(() => throwNotFound("Algorithm"));
   if (algorithm) {
     res.json(algorithm);
@@ -34,7 +35,10 @@ export async function getAlgorithm(req: Request, res: Response) {
  * @param res
  */
 export async function getAlgorithms(req: Request, res: Response) {
-  const algorithms = await Algorithm.find().catch(() =>
+  const algorithms = await Algorithm.find(
+    {},
+    "-owner -dispatcher.content -reducer.content -runner.content"
+  ).catch(() =>
     throwNotFound("Algorithms")
   );
   res.json(algorithms);
@@ -47,18 +51,50 @@ export async function getAlgorithms(req: Request, res: Response) {
  */
 export async function createAlgorithm(req: Request, res: Response) {
   const { _id } = req.user;
-  const { title } = req.body;
+  const { 
+    title,
+    description,
+    inputs,
+    gpu,
+    dispatcher,
+    runner,
+    reducer,
+  } = req.body;
 
-  const errors = combineValidations(validateRequired(title, "Title"));
+  const errors = combineValidations(
+    validateRequired(title, "title", "Title"),
+    validateRequired(description, "description", "Description"),
+    validateRequired(inputs, "inputs", "Inputs"),
+    validateFilePointer(dispatcher, "dispatcher", "Dispatcher"),
+    validateFilePointer(runner, "runner", "Runner"),
+    validateFilePointer(reducer, "reducer", "Reducer"),
+  );
   if (errors) {
     throwValidationError(errors);
   }
 
-  const algorithm = await Algorithm.create({
+  const saveResult = await Algorithm.create({
     owner: _id,
-    title
+    title,
+    description,
+    inputs,
+    gpu,
+    dispatcher,
+    runner,
+    reducer,
   });
-  res.status(201).json(algorithm);
+
+  const algorithm = await Algorithm.findOne(
+    {
+      _id: saveResult._id
+    },
+    "-owner -dispatcher.content -reducer.content -runner.content"
+  ).catch(() => throwNotFound("Algorithm"));
+  if (algorithm) {
+    res.status(201).json(algorithm);
+  } else {
+    throwNotFound("Algorithm");
+  }
 }
 
 /**
@@ -69,9 +105,24 @@ export async function createAlgorithm(req: Request, res: Response) {
 export async function updateAlgorithm(req: Request, res: Response) {
   const { _id } = req.user;
   const { id } = req.params;
-  const { title } = req.body;
+  const { 
+    title,
+    description,
+    inputs,
+    gpu,
+    dispatcher,
+    runner,
+    reducer,
+  } = req.body;
 
-  const errors = combineValidations(validateRequired(title, "Title"));
+  const errors = combineValidations(
+    validateRequired(title, "title", "Title"),
+    validateRequired(description, "description", "Description"),
+    validateRequired(inputs, "inputs", "Inputs"),
+    validateFilePointer(dispatcher, "dispatcher", "Dispatcher"),
+    validateFilePointer(runner, "runner", "Runner"),
+    validateFilePointer(reducer, "reducer", "Reducer"),
+  );
   if (errors) {
     throwValidationError(errors);
   }
@@ -83,11 +134,18 @@ export async function updateAlgorithm(req: Request, res: Response) {
     },
     {
       $set: {
-        title
+        title,
+        description,
+        inputs,
+        gpu,
+        ...spreadFilePointer(dispatcher, "dispatcher"),
+        ...spreadFilePointer(runner, "runner"),
+        ...spreadFilePointer(reducer, "reducer"),
       }
     },
     {
-      new: true
+      new: true,
+      projection: "-owner -dispatcher.content -reducer.content -runner.content"
     }
   ).catch(() => throwNotFound("Algorithm"));
   res.json(algorithm);
