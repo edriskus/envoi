@@ -33,6 +33,8 @@ export interface IRunnerState {
   ready: boolean;
   running: boolean;
   progress: number;
+  fetching: boolean;
+  activeBlockId?: string;
 }
 
 class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
@@ -42,6 +44,7 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
     blocks: [],
     ready: false,
     running: false,
+    fetching: false,
     progress: 0,
   };
 
@@ -58,10 +61,11 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
     if (finished) {
       return <Typography align="center">This job has finished</Typography>;
     }
-    const { ready, running, progress } = this.state;
+    const { ready, running, progress, activeBlockId } = this.state;
     const startActive = !running;
     const pauseActive = running;
-    const status = running ? "Running" : ready ? "Ready" : "Idle";
+    const status = running ? `Running block #${activeBlockId}` : ready 
+      ? "Ready" : "Idle";
     return (
       <>
         <Typography variant="body1">
@@ -126,11 +130,15 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
     );
   };
 
-  private fetchNextBlock = async (executeImmediately?: boolean) => {    
+  private fetchNextBlock = async (executeImmediately?: boolean) => {  
+    
     try {
       const { blocks } = this.state;
+      console.log("Fetching a block, now have", blocks.length);
       const { jobId } = this.props;
+      this.setState({ fetching: true });
       const block = (await apiFetch(`run/${jobId}/block`, null)).data;
+      this.setState({ fetching: false });
       if (executeImmediately) {
         this.executeBlock(block);
       } else {
@@ -151,16 +159,13 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
     try {
       this.setState({
         running: true,
+        activeBlockId: block._id,
         progress: 0,
       });
       if (!this.runner) {
         return new RunnerUndefinedError();
       }
       const result = await this.runner.executeBlock(block);
-      this.setState({
-        running: false,
-        progress: 100,
-      });
       return await this.submitBlock(block, result);
     } catch (e) {
       console.warn("Block execution failed");
@@ -172,9 +177,9 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
   };
 
   private registerProgress = (progress: number) => {
-    const { running, blocks } = this.state;
+    const { running, blocks, fetching } = this.state;
     this.setState({ progress });
-    if (running && blocks.length < 1 && progress > 50) {
+    if (running && !fetching && blocks.length < 1 && progress >= 50) {
       this.fetchNextBlock();
     }
   };

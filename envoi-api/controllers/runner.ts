@@ -83,7 +83,16 @@ async function generateBlock(jobId: string) {
     job.inputs.content,
   );
   if (!inputs) {
-    throwNotFound("Block");
+    const availableBlock = await Block.findOne({ 
+      jobId, 
+      validated: false,
+    }, "_id jobId algorithmId inputs")
+      .catch(() => null);
+    if (!availableBlock) {
+      throwNotFound("Block");
+    } else {
+      return availableBlock;
+    }
   } else {
     return Block.create({
       jobId,
@@ -140,7 +149,9 @@ async function processReducer(resultData: any, jobId: string) {
     resultData, 
     job.inputs.content,
   );
-  job.finished = !!finished;
+  if (!!finished) {
+    job.finished = !!finished;
+  }
   job.results = results;
   return await job.save();
 }
