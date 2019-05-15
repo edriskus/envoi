@@ -1,4 +1,5 @@
 import React from "react";
+import QRCode from "qrcode.react";
 import Runner from "../Runner/Runner";
 import Info from "../../components/Info/Info";
 import DelayButton from "../../components/DelayButton/DelayButton";
@@ -8,7 +9,7 @@ import { IJob } from "../../types/job";
 import { IApiError } from "../../types/api";
 import { RouteComponentProps } from "react-router";
 import FakeText from "../../components/FakeText/FakeText";
-import { Grid, Card, CardContent, LinearProgress } from "@material-ui/core";
+import { Grid, Card, CardContent, LinearProgress, Typography } from "@material-ui/core";
 
 export interface IJobViewStateProps {
   job?: IJob;
@@ -46,6 +47,7 @@ class JobView extends React.PureComponent<IJobViewProps> {
 
   render() {
     const { loading, job, error } = this.props;
+    const qrValue = job ? window.location.origin + "/embed/" + job._id : "";
     return (
       <>
         <NotFoundHandler to="/jobs" error={error} />
@@ -53,6 +55,14 @@ class JobView extends React.PureComponent<IJobViewProps> {
           <Card>
             <CardContent>
               <Info entity={job} />
+              {job && !job.finished && <div>
+                <hr />
+                <Typography 
+                  variant="body2"
+                  gutterBottom={true}
+                >Invite friends to help</Typography>
+                <QRCode value={qrValue} />
+              </div>}
             </CardContent>
             {loading && <LinearProgress />}
           </Card>

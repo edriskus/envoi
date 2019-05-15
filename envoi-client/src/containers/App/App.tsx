@@ -1,5 +1,6 @@
 import React from "react";
 import appStyles from "./App.tss";
+import Embed from "../Embed/Embed";
 import theme from "../../styles/theme.tss";
 import ConnectedRoutes from "../Routes/ConnectedRoutes";
 import ConnectedHeader from "../Header/ConnectedHeader";
@@ -14,7 +15,7 @@ import {
 import { Component } from "react";
 import { Provider } from "react-redux";
 import { configStore } from "../../state/store";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { loadPersistedState } from "../../helpers/localStorage";
 
 type IAppProps = WithStyles<typeof appStyles>;
@@ -29,15 +30,20 @@ class App extends Component<IAppProps> {
         <Router>
           <CssBaseline />
           <MuiThemeProvider theme={theme}>
-            <ConnectedHeader />
-            <div className={classes.mainWrapper}>
-              <Grid 
-                spacing={16}
-                container={true} 
-              >
-                <ConnectedRoutes />
-              </Grid>
-            </div>
+            <Switch>
+              <Route path="/embed/:id" exact={true} component={Embed} />,
+              <>
+                <ConnectedHeader />
+                <div className={classes.mainWrapper}>
+                  <Grid 
+                    spacing={16}
+                    container={true} 
+                  >
+                    <ConnectedRoutes />
+                  </Grid>
+                </div>
+              </>
+            </Switch>
           </MuiThemeProvider>
         </Router>
       </Provider>
