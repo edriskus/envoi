@@ -1,0 +1,63 @@
+entity {
+  bgcolor: "#ededed", 
+  size: "10"
+}
+
+header {
+  size: "10"
+}
+
+[Algorithm]
+*_id { label: "ObjectID, required, unique" }
+title { label: "String, required" }
+owner { label: "String, required" }
+description { label: "String, required" }
+inputs { label: "String, required" }
+gpu { label: "Boolean" }
+dispatcher { label: "FilePointer" }
+runner { label: "FilePointer" }
+reducer { label: "FilePointer" }
+
+[Job]
+*_id { label: "ObjectID, required, unique" }
+title { label: "String, required" }
++owner { label: "String, required" }
+description { label: "String, required" }
++algorithmId { label: "String, required" }
+finished { label: "Boolean, required, false" }
+inputs { label: "FilePointer" }
+results { label: "Object" }
+
+[Block]
+*_id { label: "ObjectID, required, unique" }
++jobId { label: "String, required" }
++algorithmId { label: "String, required" }
+running { label: "Boolean, required, false" }
+validated { label: "Boolean, required, false" }
+inputs { label: "Object, required" }
+results { label: "[blockResultSchema], required" }
+
+[Credit]
+*_id { label: "ObjectID, required, unique" }
++jobId { label: "String" }
++owner { label: "String, required" }
+value { label: "Number, required" }
+
+[User]
+*_id { label: "ObjectID, required, unique" }
+username { label: "String, required" }
+password { label: "String, required" }
+email { label: "String, required" }
+type { label: "String, required, 'CONSUMER'" }
+firstName { label: "String, required" }
+lastName { label: "String" }
+activationToken { label: "String" }
+
+Algorithm *--1 User
+Job *--1 User
+Job *--1 Algorithm
+Block *--1 Job
+Block *--1 Algorithm 
+Block *--* User
+Credit *--1 User
+Credit *--? Job
