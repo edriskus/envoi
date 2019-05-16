@@ -58,6 +58,7 @@ export async function doLogin(req: Request, res: Response) {
       );
       res.json({
         token,
+        _id: (user as any)._id,
         username: (user as any).username,
         email: (user as any).email,
         type: (user as any).type,

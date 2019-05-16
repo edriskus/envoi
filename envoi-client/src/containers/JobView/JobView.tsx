@@ -13,12 +13,14 @@ import { Grid, Card, CardContent, LinearProgress, Typography } from "@material-u
 
 export interface IJobViewStateProps {
   job?: IJob;
+  userId?: string;
   error?: IApiError;
   loading: boolean;
 }
 
 export interface IJobViewDispatchProps {
   clearJob(): void;
+  requestGetCredits(): void;
   requestGetJob(id: string): void;
   requestDeleteJob(id: string): void;
 }
@@ -46,7 +48,7 @@ class JobView extends React.PureComponent<IJobViewProps> {
   }
 
   render() {
-    const { loading, job, error } = this.props;
+    const { loading, job, error, userId } = this.props;
     const qrValue = job ? window.location.origin + "/embed/" + job._id : "";
     return (
       <>
@@ -73,6 +75,7 @@ class JobView extends React.PureComponent<IJobViewProps> {
               {(job != null) ? (
                 <Runner 
                   gpu={!!job.gpu}
+                  userId={userId}
                   jobId={job._id as string}
                   finished={!!job && !!job.finished}
                   triggerUpdate={this.fetchJob}
@@ -97,10 +100,11 @@ class JobView extends React.PureComponent<IJobViewProps> {
   }
 
   private fetchJob = () => {
-    const { match, requestGetJob } = this.props;
+    const { match, requestGetJob, requestGetCredits } = this.props;
     const { params } = match;
     if (params.id) {
       requestGetJob(params.id);
+      requestGetCredits();
     }
   }
 

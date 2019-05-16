@@ -19,6 +19,7 @@ import { RunnerUndefinedError } from "../../helpers/runner";
 export interface IRunnerOwnProps {
   gpu: boolean;
   jobId: string;
+  userId?: string;
   finished: boolean;
   autoStart?: boolean;
   triggerUpdate?: () => void;
@@ -64,8 +65,20 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
     const { ready, running, progress, activeBlockId } = this.state;
     const startActive = !running;
     const pauseActive = running;
-    const status = running ? `Running block #${activeBlockId}` : ready 
-      ? "Ready" : "Idle";
+    let status: string;
+    if (running) {
+      if (activeBlockId) {
+        status = `Running block #${activeBlockId}`;
+      } else {
+        status = "No more blocks left";
+      }
+    } else {
+      if (ready) {
+        status = "Ready";
+      } else {
+        status = "Idle";
+      }
+    }
     return (
       <>
         <Typography variant="body1">
@@ -131,13 +144,12 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
   };
 
   private fetchNextBlock = async (executeImmediately?: boolean) => {  
-    
     try {
       const { blocks } = this.state;
-      console.log("Fetching a block, now have", blocks.length);
       const { jobId } = this.props;
       this.setState({ fetching: true });
-      const block = (await apiFetch(`run/${jobId}/block`, null)).data;
+      const url = `run/${jobId}/block`;
+      const block = (await apiFetch(url, null)).data;
       this.setState({ fetching: false });
       if (executeImmediately) {
         this.executeBlock(block);
@@ -185,10 +197,14 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
   };
 
   private submitBlock = async (block: IBlock, result: any) => {
-    const { jobId, triggerUpdate } = this.props; 
+    const { jobId, triggerUpdate, userId } = this.props; 
     const { blocks } = this.state;
+    let url = `run/${jobId}/block/${block._id}`;
+    if (userId) {
+      url += `?userId=${userId}`;
+    }
     const response = (await apiFetch(
-      `run/${jobId}/block/${block._id}`, 
+      url, 
       null,
       "POST",
       result,

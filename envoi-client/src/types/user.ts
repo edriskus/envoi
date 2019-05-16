@@ -9,6 +9,7 @@ import {
 export type UserType = "CONSUMER" | "CREATOR";
 
 export interface IUserReduxState extends ILoadableReduxState {
+  _id?: string;
   credits?: number;
   registered?: boolean;
   token?: string;
@@ -61,6 +62,7 @@ export interface IReceiveLoginAction {
   type: userConstants.resLogin;
   payload:
     | {
+        _id: string;
         token: string;
         username: string;
         email: string;

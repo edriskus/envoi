@@ -41,6 +41,7 @@ export const requestLoginAction = (
 
 export const receiveLoginAction = (
   response: {
+    _id: string,
     token: string,
     username: string,
     email: string,

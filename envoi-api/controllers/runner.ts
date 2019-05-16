@@ -1,5 +1,6 @@
 import Job from "../models/job";
 import Block from "../models/block";
+import Credit from "../models/credit";
 import Algorithm from "../models/algorithm";
 
 import { Response, Request } from "express";
@@ -71,6 +72,10 @@ export async function getBlock(req: Request, res: Response) {
   }
 }
 
+/**
+ * 
+ * @param jobId 
+ */
 async function generateBlock(jobId: string) {
   const job = await Job.findById(jobId, "algorithmId inputs")
     .catch(() => throwNotFound("Job"));
@@ -112,6 +117,7 @@ async function generateBlock(jobId: string) {
  */
 export async function submitBlock(req: Request, res: Response) {
   const { id, blockId } = req.params;
+  const { userId } = req.query;
   const result = req.body;
   const block = await Block.findOne({ _id: blockId, jobId: id })
     .catch(() => throwNotFound("Block"));
@@ -120,12 +126,12 @@ export async function submitBlock(req: Request, res: Response) {
   }
   const sameResultIndex = findSameResultIndex(result, block.results);
   if (sameResultIndex !== -1) {
-    block.results[sameResultIndex].userIds.push(true);
+    block.results[sameResultIndex].userIds.push(userId || true);
     const { valid, resultData, userIds } = isBlockValid(block.results);
     if (valid) {
       block.validated = true;
       await processReducer(resultData, id);
-      await assignPoints(userIds);
+      await assignPoints(id, userIds);
     }
   } else {
     block.results.push({
@@ -138,6 +144,11 @@ export async function submitBlock(req: Request, res: Response) {
   res.status(200).json({ status: 200, accepted: true });
 }
 
+/**
+ * 
+ * @param resultData 
+ * @param jobId 
+ */
 async function processReducer(resultData: any, jobId: string) {
   const job = await Job.findById(jobId, "algorithmId results inputs")
     .catch(() => throwNotFound("Job"));
@@ -156,8 +167,21 @@ async function processReducer(resultData: any, jobId: string) {
   return await job.save();
 }
 
-async function assignPoints(userIds: string[]) {
+/**
+ * 
+ * @param userIds 
+ */
+async function assignPoints(jobId: string, userIds: string[]) {
   const first = userIds[1];
   const validators = userIds.slice(1);
-  // TODO assign 1 to first and 1/n to each validator
+  const credits = [
+    { jobId, owner: first, value: 1 },
+    ...validators.map(v => ({
+      jobId, owner: v, value: 1 / validators.length
+    }))
+  ];
+  credits.filter(c => typeof c.owner === "string")
+    .map(c => {
+      Credit.create(c);
+    });
 }
