@@ -19,6 +19,7 @@ const landingStyles = (theme: Theme) => createStyles({
     justifyContent: "center",
   },
   screenshot: {
+    height: "100%",
     width: "70vw",
     marginBottom: "-16px",
   },
