@@ -1,4 +1,5 @@
 import Job from "../models/job";
+import Algorithm from "../models/algorithm";
 
 import {
   validateRequired,
@@ -22,8 +23,18 @@ export async function getJob(req: Request, res: Response) {
     },
     "-owner -inputs.content"
   ).catch(() => throwNotFound("Job"));
-  if (job) {
-    res.json(job);
+  const algorithm = await Algorithm.findById(job.algorithmId, "gpu")
+    .catch(() => throwNotFound("Algorithm"));
+  if (job && algorithm) {
+    res.json({
+      _id: job._id,
+      title: job.title,
+      description: job.description,
+      finished: job.finished,
+      algorithmId: job.algorithmId,
+      inputs: job.inputs,
+      gpu: algorithm.gpu,
+    });
   } else {
     throwNotFound("Job");
   }

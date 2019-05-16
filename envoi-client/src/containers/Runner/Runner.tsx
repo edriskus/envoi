@@ -147,7 +147,7 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
         });
       }
     } catch (e) {
-      console.warn("Block fetch failed");
+      console.warn("Block fetch failed", e);
       this.setState({
         running: false,
         ready: false,
@@ -168,7 +168,7 @@ class Runner extends React.PureComponent<IRunnerProps, IRunnerState> {
       const result = await this.runner.executeBlock(block);
       return await this.submitBlock(block, result);
     } catch (e) {
-      console.warn("Block execution failed");
+      console.warn("Block execution failed", e);
       this.setState({
         running: false,
         ready: false,
