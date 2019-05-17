@@ -33,6 +33,7 @@ export async function getJob(req: Request, res: Response) {
       finished: job.finished,
       algorithmId: job.algorithmId,
       inputs: job.inputs,
+      results: job.results,
       gpu: algorithm.gpu,
     });
   } else {
